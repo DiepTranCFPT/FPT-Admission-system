@@ -36,6 +36,7 @@ public class User extends BaseEntity {
     private String firebaseUid;
 
 
+
     @Column(unique = true)
     @Pattern(regexp = "^\\+?[0-9. ()-]{7,25}$", message = "Invalid phone number format")
     @Size(min = 10, max = 15, message = "Phone number must be between 10 and 15 digits")
@@ -53,6 +54,7 @@ public class User extends BaseEntity {
     private boolean enable;
 
     private String verificationCode;
+
 
 
 
