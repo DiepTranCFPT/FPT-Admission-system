@@ -1,6 +1,6 @@
 package com.sba.model.Response;
 
-import com.sba.entity.User;
+import com.sba.accounts.pojos.Accounts;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +8,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NotNull
-public class AccountResponse extends User {
+public class AccountResponse extends Accounts {
     private String token;
 }

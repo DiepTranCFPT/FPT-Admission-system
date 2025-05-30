@@ -2,7 +2,7 @@
 
 ## Overview
 
-The **FPT Admission System** is a backend service designed to manage user authentication, registration, and administration for an admissions platform. It leverages Spring Boot, Spring Security, and integrates with Firebase for authentication, providing a robust and secure system for handling user accounts and roles.
+The **FPT Admission System** is a backend service designed to manage accounts authentication, registration, and administration for an admissions platform. It leverages Spring Boot, Spring Security, and integrates with Firebase for authentication, providing a robust and secure system for handling accounts accounts and roles.
 
 ## Features
 
@@ -25,9 +25,9 @@ The **FPT Admission System** is a backend service designed to manage user authen
   - Password encryption using BCrypt
 
 - **User Management**
-  - Enable/disable user accounts
-  - Edit and delete (soft delete) users
-  - Retrieve all users with role and status information
+  - Enable/disable accounts accounts
+  - Edit and delete (soft delete) accounts
+  - Retrieve all accounts with role and status information
 
 ## Tech Stack
 

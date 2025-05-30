@@ -82,7 +82,7 @@
 
         try {
             const result = await signInWithPopup(auth, provider);
-            const idToken = await result.user.getIdToken();
+            const idToken = await result.accounts.getIdToken();
 
             // Gửi token đến server
             const response = await fetch("http://localhost:8080/api/authen/firebase-login", {

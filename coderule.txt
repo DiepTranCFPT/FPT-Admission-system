@@ -1,0 +1,13 @@
+// Class
+Class name: CamelCase + s
+Ex: OrderDetails
+
+// Table
+Table name: lowercase + s
+Ex: orderdetails
+
+Mix table name: lowercase + s, connect with underscore (_)
+Ex: details_orderdetails
+
+String field: define length
+Ex: @Column(length = 50)

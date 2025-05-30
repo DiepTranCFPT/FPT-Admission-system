@@ -1,8 +1,8 @@
 package com.sba.utils;
 
 
-import com.sba.entity.User;
-import com.sba.repository.AuthenticationRepository;
+import com.sba.accounts.pojos.Accounts;
+import com.sba.authentications.repositories.AuthenticationRepository;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -53,9 +53,9 @@ public class AccountUtils {
         return Pattern.matches(regex, phoneNumber);
     }
 
-    public User getCurrentUser(){
+    public Accounts getCurrentUser(){
         String email =  SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> user = userRepository.findByEmail(email);
+        Optional<Accounts> user = userRepository.findByEmail(email);
         return user.orElse(null);
     }
 
