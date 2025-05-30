@@ -1,12 +1,19 @@
 package com.sba.entity;
 
 import com.sba.utils.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
+import java.util.List;
+
+@EqualsAndHashCode(callSuper = true)
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Major extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -19,6 +26,9 @@ public class Major extends BaseEntity {
     private Double duration;
 
     private  Double fee;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Major> majors;
 
 
 
