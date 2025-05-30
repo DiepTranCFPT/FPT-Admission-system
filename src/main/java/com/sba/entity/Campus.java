@@ -5,10 +5,18 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Campus extends BaseEntity {
 
     @Id
@@ -25,5 +33,8 @@ public class Campus extends BaseEntity {
 
     @OneToMany(mappedBy = "campus")
     private List<Major> major;
+
+
+
 
 }

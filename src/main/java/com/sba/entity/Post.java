@@ -1,11 +1,17 @@
 package com.sba.entity;
 
 import com.sba.utils.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class Post extends BaseEntity {
 
     @Id
@@ -17,4 +23,11 @@ public class Post extends BaseEntity {
     private String content;
 
     private String author; // Assuming this is a reference to the User entity
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "Poster")
+    private User user;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Category category;
 }
