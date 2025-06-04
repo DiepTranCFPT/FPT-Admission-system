@@ -1,4 +1,4 @@
-package com.sba.entity;
+package com.sba.campuses.pojos;
 
 import com.sba.utils.BaseEntity;
 import jakarta.persistence.*;
