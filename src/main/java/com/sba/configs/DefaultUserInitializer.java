@@ -24,7 +24,7 @@ public class DefaultUserInitializer implements CommandLineRunner {
             Accounts accounts = Accounts.builder()
                     .password(passwordEncoder.encode("12345"))
                     .role(Roles.ADMIN)
-                    .email("swpproject2024@gmail.com")
+                    .email("trancaodiepnct@gmail.com")
                     .username("ADMIN")
                     .enable(true)
                     .deleted(false).build();
