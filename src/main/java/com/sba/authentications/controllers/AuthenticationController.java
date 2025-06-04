@@ -37,7 +37,6 @@ public class AuthenticationController {
 
     }
 
-
     @Operation(summary = "Tạo người dùng mới", description = "Đăng ký một người dùng mới với thông tin đã cung cấp.")
     @PostMapping("/register")
     public CompletableFuture<ResponseObject> regisAcount(@RequestBody RegisterRequest registerRequest) throws AccountNotFoundException {

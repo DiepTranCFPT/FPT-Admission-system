@@ -1,7 +1,7 @@
 package com.sba.configs;
 
 import com.sba.accounts.pojos.Accounts;
-import com.sba.enums.UserRole;
+import com.sba.enums.Roles;
 import com.sba.authentications.repositories.AuthenticationRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,9 +23,9 @@ public class DefaultUserInitializer implements CommandLineRunner {
         if (authenticationRepository.findByEmail("swpproject2024@gmail.com").isEmpty()) {
             Accounts accounts = Accounts.builder()
                     .password(passwordEncoder.encode("12345"))
-                    .role(UserRole.ADMIN)
+                    .role(Roles.ADMIN)
                     .email("swpproject2024@gmail.com")
-                    .name("ADMIN")
+                    .username("ADMIN")
                     .enable(true)
                     .deleted(false).build();
             authenticationRepository.saveAndFlush(accounts);

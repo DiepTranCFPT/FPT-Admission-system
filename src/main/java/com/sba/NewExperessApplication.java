@@ -3,13 +3,11 @@ package com.sba;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import java.io.IOException;
 
 
-@SpringBootApplication(scanBasePackages = "com.sba")
-@EntityScan(basePackages = {"com.sba.entity"})
+@SpringBootApplication
 public class NewExperessApplication {
 
     public static void main(String[] args) {

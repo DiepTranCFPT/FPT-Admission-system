@@ -1,6 +1,7 @@
 package com.sba.model.Response;
 
-import com.sba.enums.UserRole;
+
+import com.sba.enums.Roles;
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,7 +12,7 @@ public class UserRespone {
     private String name;
     private String email;
     private String phone;
-    private UserRole role;
+    private Roles role;
     private String plan;
     private boolean enable;
 }
