@@ -28,8 +28,10 @@ public class Major extends BaseEntity {
     private  Double fee;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Column(name = "Childmajors")
     private List<Major> majors;
 
-
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Campus campus;
 
 }

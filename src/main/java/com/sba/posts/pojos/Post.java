@@ -1,5 +1,6 @@
 package com.sba.posts.pojos;
 
+import com.sba.accounts.pojos.Accounts;
 import com.sba.utils.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -26,7 +27,7 @@ public class Post extends BaseEntity {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "Poster")
-    private User user;
+    private Accounts user;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Category category;

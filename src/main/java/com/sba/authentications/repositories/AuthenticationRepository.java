@@ -10,10 +10,7 @@ import java.util.Optional;
 public interface AuthenticationRepository extends JpaRepository<Accounts, String> {   // dua ra daatabase
 
 
-    Optional<Accounts> findByPhone(String numer);
-
-
-
+    Optional<Accounts> findByPhoneNumber(String numer);
 
     boolean existsByEmail(String email);
 

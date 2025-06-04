@@ -1,6 +1,7 @@
 package com.sba.accounts.pojos;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sba.enums.Roles;
 import com.sba.utils.BaseEntity;
 import jakarta.persistence.*;
@@ -12,7 +13,6 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
 @NoArgsConstructor
@@ -28,8 +28,10 @@ public class Accounts extends BaseEntity {
     @Column(unique = true, length = 30)
     private String username;
 
-    @Column(length = 50)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+
+    private String firebaseUid;
 
     @Column(unique = true, length = 11)
     @Size(min = 10, max = 11, message = "Phone number must be between 10 and 11 digits")

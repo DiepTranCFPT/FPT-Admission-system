@@ -1,5 +1,6 @@
 package com.sba.chatboxes.pojos;
 
+import com.sba.accounts.pojos.Accounts;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,6 +18,6 @@ public class ChatBoxSession {
     private String title;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    private Accounts user;
 
 }

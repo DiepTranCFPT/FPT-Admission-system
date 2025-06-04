@@ -1,7 +1,7 @@
 package com.sba.authentications.services;
 
 import com.sba.accounts.pojos.Accounts;
-import com.sba.enums.UserRole;
+import com.sba.enums.Roles;
 import com.sba.authentications.repositories.AuthenticationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,11 +13,11 @@ public class AdminService {
 
     public void createAdmin(){
         Accounts newAccounts = new Accounts();
-        newAccounts.setName("admin");
+        newAccounts.setUsername("admin");
         newAccounts.setPassword("admin");
         newAccounts.setEnable(true);
         newAccounts.setEmail("admin@gmail.com");
-        newAccounts.setRole(UserRole.ADMIN);
+        newAccounts.setRole(Roles.ADMIN);
         authenticationRepository.save(newAccounts);
     }
 }

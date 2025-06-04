@@ -2,10 +2,11 @@ package com.sba.authentications.services;
 
 
 import com.sba.accounts.pojos.Accounts;
-import com.sba.enums.UserRole;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
+import com.sba.enums.Roles;
 import com.sba.exceptions.GlobalException;
 import com.sba.model.Request.*;
 import com.sba.exceptions.AuthException;
@@ -82,9 +83,9 @@ public class AuthenticationService implements IAuthentication {
         return CompletableFuture.supplyAsync(() -> {
 
             LoginReponse accountResponse = LoginReponse.builder()
-                    .name(accounts.getName())
+                    .name(accounts.getUsername())
                     .token(tokenService.generateToken(accounts))
-                    .phone(accounts.getPhone() == null ? "" : accounts.getPhone())
+                    .phone(accounts.getPhoneNumber() == null ? "" : accounts.getPhoneNumber())
                     .email(accounts.getEmail())
                     .id(accounts.getId())
                     .build();
@@ -109,9 +110,9 @@ public class AuthenticationService implements IAuthentication {
 
         return CompletableFuture.supplyAsync(() -> {
             Accounts accounts = Accounts.builder()
-                    .name(registerRequest.getName())
+                    .username(registerRequest.getName())
                     .email(registerRequest.getEmail() == null ? "" : registerRequest.getEmail())
-                    .role(UserRole.USER)
+                    .role(Roles.USER)
 //                    .phone(registerRequest.getPhone() == null ? "" : registerRequest.getPhone())
                     .enable(true)
                     .password(passwordEncoder.encode(registerRequest.getPassword()))
@@ -153,8 +154,8 @@ public class AuthenticationService implements IAuthentication {
                             .httpStatus(HttpStatus.OK)
                             .data(LoginReponse.builder()
                                     .email(accountsOpt.getEmail())
-                                    .name(accountsOpt.getName())
-                                    .phone(accountsOpt.getPhone())
+                                    .name(accountsOpt.getUsername())
+                                    .phone(accountsOpt.getPhoneNumber())
                                     .id(accountsOpt.getId())
                                     .token(tokenService.generateToken(accountsOpt))
                                     .build())
@@ -165,16 +166,16 @@ public class AuthenticationService implements IAuthentication {
                 Accounts newAccounts = Accounts.builder()
                         .firebaseUid(firebaseToken.getUid())
                         .email(email)
-                        .name(firebaseToken.getName())
-                        .role(UserRole.USER)
+                        .username(firebaseToken.getName())
+                        .role(Roles.USER)
                         .enable(true).deleted(false).build();
                 authenticationRepository.saveAndFlush(newAccounts);
                 return ResponseObject.builder()
                         .httpStatus(HttpStatus.OK)
                         .data(LoginReponse.builder()
                                 .email(newAccounts.getEmail())
-                                .name(newAccounts.getName())
-                                .phone(newAccounts.getPhone())
+                                .name(newAccounts.getUsername())
+                                .phone(newAccounts.getPhoneNumber())
                                 .id(newAccounts.getId())
                                 .token(tokenService.generateToken(newAccounts))
                                 .build())
@@ -197,9 +198,9 @@ public class AuthenticationService implements IAuthentication {
 
             accountResponses.add(UserRespone.builder()
                     .email(user.getEmail())
-                    .name(user.getName())
+                    .name(user.getUsername())
                     .role(user.getRole())
-                    .phone(user.getPhone())
+                    .phone(user.getPhoneNumber())
                     .id(user.getId())
                     .enable(user.isEnable())
                     .plan(planName)
@@ -217,9 +218,9 @@ public class AuthenticationService implements IAuthentication {
     @Transactional(rollbackFor = Exception.class)
     public String edit(UserRespone userRespone) throws AccountNotFoundException {
         Accounts accounts = authenticationRepository.findById(userRespone.getId()).orElseThrow(() -> new AccountNotFoundException("Account does not exist"));
-        accounts.setName(userRespone.getName());
+        accounts.setUsername(userRespone.getName());
         accounts.setEmail(userRespone.getEmail());
-        accounts.setPhone(userRespone.getPhone());
+        accounts.setPhoneNumber(userRespone.getPhone());
         accounts.setEnable(userRespone.isEnable());
         accounts.setRole(userRespone.getRole());
         authenticationRepository.saveAndFlush(accounts);
@@ -248,12 +249,12 @@ public class AuthenticationService implements IAuthentication {
         }
 
         switch (typeEditUser) {
-            case Name -> accounts.setName(content);
+            case Name -> accounts.setUsername(content);
             case Phone -> {
                 if (!content.matches("\\d{10,15}")) {
                     throw new IllegalArgumentException("Phone number must be between 10 and 15 digits and contain only numbers.");
                 }
-                accounts.setPhone(content);
+                accounts.setPhoneNumber(content);
             }
             default -> throw new UsernameNotFoundException("Invalid type edit!");
         }
@@ -276,10 +277,10 @@ public class AuthenticationService implements IAuthentication {
         if (account == null) {
             // Tạo tài khoản mới
             account = Accounts.builder()
-                    .name(loginGoogleRequest.getName())
+                    .username(loginGoogleRequest.getName())
                     .email(loginGoogleRequest.getEmail())
                     .password(passwordEncoder.encode(UUID.randomUUID().toString())) // Sử dụng một password tạm thời
-                    .role(UserRole.USER)
+                    .role(Roles.USER)
                     .enable(true)
                     .verificationCode(UUID.randomUUID().toString())
                     .deleted(false).build();
@@ -302,8 +303,8 @@ public class AuthenticationService implements IAuthentication {
         accountResponse.setId(account.getId());
         accountResponse.setEmail(account.getEmail());
         accountResponse.setToken(token);
-        accountResponse.setName(account.getName());
-        accountResponse.setPhone(account.getPhone());
+        accountResponse.setUsername(account.getUsername());
+        accountResponse.setPhoneNumber(account.getPhoneNumber());
 
         // Trả về thông tin phản hồi
         return CompletableFuture.supplyAsync(() -> {
@@ -339,7 +340,7 @@ public class AuthenticationService implements IAuthentication {
         emailDetail.setMsgBody(""); // You might want to add a meaningful message here
         emailDetail.setButtonValue("Reset Password");
         emailDetail.setLink("https://gymbe-production.up.railway.app/api/authen/reset-password?token=" + tokenService.generateToken(account));
-        emailDetail.setName(account.getName());
+        emailDetail.setName(account.getUsername());
 
         Runnable r = new Runnable() {
             @Override

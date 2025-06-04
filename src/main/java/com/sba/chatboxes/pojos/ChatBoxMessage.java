@@ -1,6 +1,7 @@
 package com.sba.chatboxes.pojos;
 
-import com.sba.enums.UserRole;
+import com.sba.enums.Roles;
+
 import com.sba.utils.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ public class ChatBoxMessage extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    private UserRole role;
+    private Roles role;
 
     private String content;
 

@@ -22,5 +22,4 @@ public interface IAuthentication {
     void forgotPassword(ForgotPasswordRequest forgotPasswordRequest) throws AccountNotFoundException;
     int resetPassword(ResetPasswordRequest resetPasswordRequest) throws AccountNotFoundException;
 
-
 }

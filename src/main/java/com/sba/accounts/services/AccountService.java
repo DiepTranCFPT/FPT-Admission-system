@@ -27,7 +27,7 @@ public class AccountService implements UserDetailsService {
             accounts = authenticationRepository.findByEmail(username)
                     .orElseThrow(() -> new UsernameNotFoundException("email is not a valid!"));
         } else if (AccountUtils.isValidPhoneNumber(username)) {
-            accounts = authenticationRepository.findByPhone(username)
+            accounts = authenticationRepository.findByPhoneNumber(username)
                     .orElseThrow(() -> new UsernameNotFoundException("Phone number is not a valid!"));
         } else {
             throw new UsernameNotFoundException("Account does not exist!");
