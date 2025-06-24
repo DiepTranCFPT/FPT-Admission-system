@@ -45,8 +45,8 @@ public class TicketController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/respone_ticket/{id}")
-    public ResponseEntity<AdmissionTickets> responeToTicket(@PathVariable String id, @RequestBody String response) {
+    @PostMapping("/response_ticket/{id}")
+    public ResponseEntity<AdmissionTickets> responseToTicket(@PathVariable String id, @RequestBody String response) {
         AdmissionTickets updated = ticketService.responeToTicket(id, response);
         return ResponseEntity.ok(updated);
     }

@@ -7,6 +7,7 @@ import com.sba.applications.repository.ApplicationRepository;
 import com.sba.campuses.pojos.Major;
 import com.sba.campuses.repository.CampusRepository;
 import com.sba.campuses.repository.MajorRepository;
+import com.sba.enums.ApplicationStatus;
 import com.sba.utils.AccountUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -71,7 +72,43 @@ public class ApplicationServiceImpl implements com.sba.applications.service.Appl
         }
         application.setMajor(major);
         application.setScholarship("null");
-
+        application.setApplicationStatus(ApplicationStatus.PENDING);
         return application;
+    }
+
+    @Override
+    public List<Application> getAllApplications() {
+        return applicationRepository.findAll().stream().filter(Application::isDeleted).toList();
+    }
+
+    @Override
+    public Application getApplicationById(String id) {
+        return applicationRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    @Transactional
+    public Application updateApplication(String id, ApplicationDTO applicationDTO) {
+        Application existing = applicationRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Application not found"));
+        validateApplicationDTO(applicationDTO);
+        var major = majorRepository.findByName(applicationDTO.getMajor())
+                .orElseThrow(() -> new IllegalArgumentException("Major not found: " + applicationDTO.getMajor()));
+        var campus = campusRepository.findByName(applicationDTO.getCampus())
+                .orElseThrow(() -> new IllegalArgumentException("Campus not found: " + applicationDTO.getCampus()));
+        existing.setMajor(major);
+        existing.setCampus(campus);
+        return applicationRepository.save(existing);
+    }
+
+    @Override
+    @Transactional
+    public void deleteApplication(String id) {
+        if (!applicationRepository.existsById(id)) {
+            throw new IllegalArgumentException("Application not found");
+        }
+        Application application = applicationRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Application not found"));
+        application.setDeleted(true);
     }
 }
