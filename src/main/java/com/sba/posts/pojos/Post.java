@@ -23,12 +23,12 @@ public class Post extends BaseEntity {
 
     private String content;
 
-    private String author; // Assuming this is a reference to the User entity
+    private String author;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch =  FetchType.EAGER)
     @JoinColumn(name = "Poster")
     private Accounts user;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Category category;
 }
