@@ -16,7 +16,7 @@ public class BaseEntity {
 
     private LocalDateTime timeCreated;
 
-    private LocalDateTime TimeUpdatedLast;
+    private LocalDateTime timeUpdatedLast;
 
     //    @Column(name = "is_delete")
     @Builder.Default
@@ -30,9 +30,8 @@ public class BaseEntity {
     }
 
 
-    // tu dong cap nhat tg khi obj duoc thai doi
     @PreUpdate
     protected void updateDateTime() {
-        TimeUpdatedLast = LocalDateTime.now();
+        timeUpdatedLast = LocalDateTime.now();
     }
 }
