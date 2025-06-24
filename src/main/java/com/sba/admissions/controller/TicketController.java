@@ -44,5 +44,11 @@ public class TicketController {
         ticketService.deleteTicket(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/response_ticket/{id}")
+    public ResponseEntity<AdmissionTickets> responseToTicket(@PathVariable String id, @RequestBody String response) {
+        AdmissionTickets updated = ticketService.responeToTicket(id, response);
+        return ResponseEntity.ok(updated);
+    }
 }
 

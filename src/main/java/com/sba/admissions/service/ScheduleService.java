@@ -12,4 +12,6 @@ public interface ScheduleService {
     List<ScheduleResponseDTO> getAllSchedules();
     ScheduleResponseDTO updateSchedule(String id, ScheduleRequestDTO schedule);
     void deleteSchedule(String id);
+
+    ScheduleResponseDTO respontStaff(String googleMeetLink, String scheduleId);
 }

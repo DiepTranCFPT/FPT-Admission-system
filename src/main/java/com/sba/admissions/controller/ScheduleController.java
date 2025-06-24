@@ -40,4 +40,9 @@ public class ScheduleController {
         scheduleService.deleteSchedule(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/response/{id}")
+    public ResponseEntity<ScheduleResponseDTO> responseToSchedule(@PathVariable String id, @RequestBody String request) {
+        return ResponseEntity.ok(scheduleService.respontStaff(id, request));
+    }
 }
