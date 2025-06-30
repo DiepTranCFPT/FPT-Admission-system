@@ -19,7 +19,6 @@ public class AccountDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(new SimpleGrantedAuthority(accounts.getRole().name()));
     }
-
     @Override
     public String getPassword() {
         return accounts.getPassword();
