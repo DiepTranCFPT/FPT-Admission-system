@@ -21,7 +21,7 @@ public class PostImg extends BaseEntity {
 
     private String imageUrl;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Post post;
 
 

@@ -107,7 +107,6 @@ public class AuthenticationService implements IAuthentication {
         if (check) {
             throw new AccountNotFoundException("email exists!");
         }
-
         return CompletableFuture.supplyAsync(() -> {
             Accounts accounts = Accounts.builder()
                     .username(registerRequest.getName())
@@ -117,10 +116,7 @@ public class AuthenticationService implements IAuthentication {
                     .enable(true)
                     .password(passwordEncoder.encode(registerRequest.getPassword()))
                     .deleted(false).build();
-
-
             authenticationRepository.saveAndFlush(accounts);
-
             return ResponseObject.builder()
                     .httpStatus(HttpStatus.OK)
                     .message("register successfully!")
@@ -328,6 +324,17 @@ public class AuthenticationService implements IAuthentication {
             return 1;
         }
 
+    }
+
+    @Override
+    public CompletableFuture<ResponseObject> createStaff(String id) throws AccountNotFoundException {
+        Accounts account = authenticationRepository.findById(id).orElseThrow(() -> new AccountNotFoundException("Account does not exist"));
+        account.setRole(Roles.STAFF);
+        return CompletableFuture.supplyAsync(() -> ResponseObject.builder()
+                .data(account)
+                .message("create successful")
+                .httpStatus(HttpStatus.OK)
+                .build());
     }
     @Override
     public void forgotPassword(ForgotPasswordRequest forgotPasswordRequest) throws AccountNotFoundException {

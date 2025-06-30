@@ -21,5 +21,6 @@ public interface IAuthentication {
     CompletableFuture<ResponseObject> editUserInfor(String id, TypeEditUser typeEditUser, String content);
     void forgotPassword(ForgotPasswordRequest forgotPasswordRequest) throws AccountNotFoundException;
     int resetPassword(ResetPasswordRequest resetPasswordRequest) throws AccountNotFoundException;
+    CompletableFuture<ResponseObject> createStaff(String id) throws AccountNotFoundException;
 
 }
