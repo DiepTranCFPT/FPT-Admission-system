@@ -1,6 +1,6 @@
 package com.sba.post.entity;
 
-import com.sba.entity.User;
+import com.sba.accounts.pojos.Accounts;
 import com.sba.post.enums.Category;
 import com.sba.post.enums.Status;
 import com.sba.utils.BaseEntity;
@@ -42,5 +42,5 @@ public class Posts extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private Accounts accounts;
 }

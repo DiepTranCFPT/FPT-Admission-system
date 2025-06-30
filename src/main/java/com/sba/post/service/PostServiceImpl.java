@@ -1,6 +1,7 @@
 package com.sba.post.service;
 
-import com.sba.entity.User;
+import com.sba.accounts.pojos.Accounts;
+import com.sba.authentications.repositories.AuthenticationRepository;
 import com.sba.post.Specification.PostSpecification;
 import com.sba.post.dto.request.PostCreateAndUpdateRequest;
 import com.sba.post.dto.request.PostFilterRequest;
@@ -9,7 +10,6 @@ import com.sba.post.entity.Posts;
 import com.sba.post.enums.Category;
 import com.sba.post.enums.Status;
 import com.sba.post.repository.PostRepository;
-import com.sba.repository.AuthenticationRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -83,8 +83,8 @@ public class PostServiceImpl implements PostService {
         Category category = Category.valueOf(request.getCategory().toUpperCase());
         post.setCategory(category);
 
-        User user = authenticationRepository.findById(id).orElseThrow();
-        post.setUser(user);
+        Accounts account = authenticationRepository.findById(id).orElseThrow();
+        post.setAccounts(account);
 
         repository.save(post);
     }
