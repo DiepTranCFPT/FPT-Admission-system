@@ -20,11 +20,12 @@ public class DefaultUserInitializer implements CommandLineRunner {
     }
     @Override
     public void run(String... args) throws Exception {
-        if (authenticationRepository.findByEmail("swpproject2024@gmail.com").isEmpty()) {
+        String adminEmail = "trancaodiepnct@gmail.com";
+        if (authenticationRepository.findByEmail(adminEmail).isEmpty()) {
             Accounts accounts = Accounts.builder()
                     .password(passwordEncoder.encode("12345"))
                     .role(Roles.ADMIN)
-                    .email("trancaodiepnct@gmail.com")
+                    .email(adminEmail)
                     .username("ADMIN")
                     .enable(true)
                     .deleted(false).build();
