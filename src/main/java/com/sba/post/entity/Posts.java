@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class Posts extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String title;
