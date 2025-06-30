@@ -2,7 +2,6 @@ package com.sba.post.controller;
 
 import com.sba.post.dto.request.PostCreateAndUpdateRequest;
 import com.sba.post.dto.response.PostsResponse;
-import com.sba.post.entity.Posts;
 import com.sba.post.enums.Category;
 import com.sba.post.service.PostService;
 import lombok.RequiredArgsConstructor;
