@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class PostImg extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
