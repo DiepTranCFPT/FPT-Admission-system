@@ -15,7 +15,7 @@ import java.io.InputStream;
 @PropertySource("classpath:application.properties")
 public class FirebaseInitializer {
 
-    private final String firebaseCredentials = "./FirebaseSetting.json";
+    private final String firebaseCredentials = "firebase-admin.json";
 
     @Bean
     public FirebaseAuth firebaseAuth() throws IOException {
