@@ -14,6 +14,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "majors")
 public class Major extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "chat_box_messages")
 public class ChatBoxMessage extends BaseEntity {
 
     @Id
