@@ -2,11 +2,14 @@ package com.sba.admissions.controller;
 
 import com.sba.admissions.dto.ScheduleRequestDTO;
 import com.sba.admissions.dto.ScheduleResponseDTO;
+import com.sba.admissions.pojos.AdmissionSchedules;
 import com.sba.admissions.service.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -16,17 +19,17 @@ public class ScheduleController {
     private ScheduleService scheduleService;
 
     @PostMapping
-    public ResponseEntity<ScheduleResponseDTO> createSchedule(@RequestBody ScheduleRequestDTO request) {
+    public ResponseEntity<ScheduleResponseDTO> createSchedule(@RequestBody LocalDateTime request) {
         return ResponseEntity.ok(scheduleService.createSchedule(request));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ScheduleResponseDTO> getScheduleById(@PathVariable String id) {
+    public ResponseEntity<AdmissionSchedules> getScheduleById(@PathVariable String id) {
         return ResponseEntity.ok(scheduleService.getScheduleById(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<ScheduleResponseDTO>> getAllSchedules() {
+    public ResponseEntity<List<AdmissionSchedules>> getAllSchedules() {
         return ResponseEntity.ok(scheduleService.getAllSchedules());
     }
 

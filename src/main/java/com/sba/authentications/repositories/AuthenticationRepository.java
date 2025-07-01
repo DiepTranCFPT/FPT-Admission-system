@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 
-public interface AuthenticationRepository extends JpaRepository<Accounts, String> {   // dua ra daatabase
+public interface AuthenticationRepository extends JpaRepository<Accounts, String> {
 
 
     Optional<Accounts> findByPhoneNumber(String numer);

@@ -124,7 +124,7 @@ public class AuthenticationController {
     }
     @PostMapping("/staff")
     @Operation(summary = "Tao tai khoan nhan vien (ADMIN)")
-    public CompletableFuture<ResponseObject> createStaff(@RequestBody String id) throws AccountNotFoundException {
+    public CompletableFuture<ResponseObject> createStaff(@RequestParam String id) throws AccountNotFoundException {
         return authenticationService.createStaff(id);
     }
 }
