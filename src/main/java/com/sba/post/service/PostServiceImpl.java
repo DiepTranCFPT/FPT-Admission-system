@@ -140,20 +140,17 @@ public class PostServiceImpl implements PostService {
                 ? repository.findAll(pageable)
                 : repository.findAll(PostSpecification.filter(request), pageable);
 
-        return postsPage.map(this::convertToDto);
-    }
-
-
-    private PostsResponse convertToDto(Posts post) {
-        PostsResponse dto = new PostsResponse();
-        dto.setId(post.getId());
-        dto.setTitle(post.getTitle());
-        dto.setContent(post.getContent());
-        dto.setCategory(post.getCategory().name());
-        dto.setPublishedAt(String.valueOf(post.getPublishedAt()));
-        dto.setStatus(post.getStatus().name());
-        dto.setCreatedAt(String.valueOf(post.getCreatedAt()));
-        return dto;
+        return postsPage.map(post -> {
+            PostsResponse dto = new PostsResponse();
+            dto.setId(post.getId());
+            dto.setTitle(post.getTitle());
+            dto.setContent(post.getContent());
+            dto.setCategory(post.getCategory().name());
+            dto.setPublishedAt(String.valueOf(post.getPublishedAt()));
+            dto.setStatus(post.getStatus().name());
+            dto.setCreatedAt(String.valueOf(post.getCreatedAt()));
+            return dto;
+        });
     }
 
 }
