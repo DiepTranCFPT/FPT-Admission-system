@@ -23,6 +23,4 @@ public class PostImg extends BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     private Post post;
 
-
-
 }
