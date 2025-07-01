@@ -24,6 +24,7 @@ public class PostController {
     @Autowired
     private final PostService postService;
 
+    //danh cho trang tin tuc va su kien, trang trai nghiem toan cau, va cuu sinh vien hehehe
     @GetMapping("/latest")
     public ResponseEntity<List<PostsResponse>> getLatestPosts(
             @RequestParam(defaultValue = "6") int limit,
@@ -39,6 +40,7 @@ public class PostController {
         }
     }
 
+    //danh cho trang admin xoa bai hehehe
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePost(@PathVariable Long id) {
         try {
@@ -51,6 +53,7 @@ public class PostController {
         }
     }
 
+    //danh cho trang admin tao bai post chua public
     @PostMapping
     public ResponseEntity<?> createPost(@RequestBody PostCreateAndUpdateRequest request, @RequestHeader("userId") String userId) {
         try {
@@ -61,6 +64,7 @@ public class PostController {
         }
     }
 
+    //danh cho trang cap nhat bai post
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePost(@PathVariable Long id, @RequestBody PostCreateAndUpdateRequest request) {
         try {
@@ -71,6 +75,7 @@ public class PostController {
         }
     }
 
+    //danh cho trang admin public bai post
     @PatchMapping("/{id}/publish")
     public ResponseEntity<?> publishPost(@PathVariable Long id)
     {
@@ -82,6 +87,7 @@ public class PostController {
         }
     }
 
+    //danh cho trang admin hien danh sach theo filter
     @GetMapping
     public ResponseEntity<Page<PostsResponse>> getAllPosts(
             @ModelAttribute PostFilterRequest filterRequest,
@@ -91,5 +97,19 @@ public class PostController {
         return ResponseEntity.ok(result);
     }
 
+    //danh cho trang course
+    @GetMapping("/{category}/{title}")
+    public ResponseEntity<PostsResponse> getPostByCategoryAndTitle(
+            @RequestParam String category,
+            @RequestParam String title
+    ) {
+        try {
+            Category enumCategory = Category.valueOf(category);
+            PostsResponse response = postService.getPostByCategoryAndTitle(enumCategory, title);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
 }
 

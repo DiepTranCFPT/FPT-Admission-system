@@ -24,5 +24,7 @@ public interface PostService {
     @Transactional
     void publishPost(Long postId);
 
+    PostsResponse getPostByCategoryAndTitle(Category category, String title);
+
     Page<PostsResponse> getFilteredPosts(PostFilterRequest request, Pageable pageable);
 }

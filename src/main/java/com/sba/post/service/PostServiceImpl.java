@@ -120,6 +120,16 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public PostsResponse getPostByCategoryAndTitle(Category category, String title) {
+        Posts post = repository.findByCategoryAndTitleContainingIgnoreCase(category, title)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+        PostsResponse response = new PostsResponse();
+        response.setTitle(post.getTitle());
+        response.setContent(post.getContent());
+        return response;
+    }
+
+    @Override
     public Page<PostsResponse> getFilteredPosts(PostFilterRequest request, Pageable pageable) {
         boolean isAllNull = request.getTitle() == null && request.getCategory() == null &&
                 request.getStatus() == null && request.getCreatedFrom() == null &&
@@ -145,4 +155,5 @@ public class PostServiceImpl implements PostService {
         dto.setCreatedAt(String.valueOf(post.getCreatedAt()));
         return dto;
     }
+
 }
