@@ -56,8 +56,8 @@ public class PostServiceImpl implements PostService {
         List<PostsResponse> responses = new ArrayList<>();
         for (Posts post : posts) {
             PostsResponse response = new PostsResponse();
+            response.setId(post.getId());
             response.setTitle(post.getTitle());
-            response.setContent(post.getContent());
             response.setCategory(post.getCategory().getLabel());
             response.setPublishedAt(post.getPublishedAt().toString());
             response.setImageUrl(extractFirstImage(post.getContent()));
@@ -67,6 +67,18 @@ public class PostServiceImpl implements PostService {
         return responses;
     }
 
+    @Override
+    public PostsResponse findById(Long id) {
+        Posts post = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+        PostsResponse response = new PostsResponse();
+        response.setId(post.getId());
+        response.setTitle(post.getTitle());
+        response.setContent(post.getContent());
+        response.setCategory(post.getCategory().name());
+        response.setPublishedAt(String.valueOf(post.getPublishedAt()));
+        return response;
+    }
 
     @Override
     public void deletePostById(Long id) {
@@ -91,7 +103,6 @@ public class PostServiceImpl implements PostService {
 
         Accounts account = authenticationRepository.findById(id).orElseThrow();
         post.setAccounts(account);
-
         repository.save(post);
     }
 
@@ -176,7 +187,7 @@ public class PostServiceImpl implements PostService {
             try {
                 Files.deleteIfExists(java.nio.file.Paths.get(filePath));
             } catch (java.io.IOException e) {
-                System.err.println("Không xóa được file: " + filePath);
+                System.err.println("Cannot delete file: " + filePath);
             }
         }
     }

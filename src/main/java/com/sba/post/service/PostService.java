@@ -13,6 +13,8 @@ import java.util.List;
 public interface PostService {
     List<PostsResponse> getLatestPosts(int limit, int offset, Category category);
 
+    PostsResponse findById(Long id);
+
     void deletePostById(Long id);
 
     @Transactional

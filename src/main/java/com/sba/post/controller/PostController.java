@@ -40,6 +40,16 @@ public class PostController {
         }
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<PostsResponse> getPostById(@PathVariable Long id) {
+        PostsResponse post = postService.findById(id);
+        if (post != null) {
+            return ResponseEntity.ok(post);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
     //danh cho trang admin xoa bai hehehe
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePost(@PathVariable Long id) {
