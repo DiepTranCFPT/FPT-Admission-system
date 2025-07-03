@@ -11,4 +11,5 @@ public class PostsResponse {
     private String publishedAt;
     private String status;
     private String createdAt;
+    private String imageUrl;
 }

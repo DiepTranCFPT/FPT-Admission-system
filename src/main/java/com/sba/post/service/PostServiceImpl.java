@@ -16,17 +16,19 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class PostServiceImpl implements PostService {
     private final AuthenticationRepository authenticationRepository;
     private final PostRepository repository;
-
     public PostServiceImpl(PostRepository repository, AuthenticationRepository authenticationRepository) {
         this.repository = repository;
         this.authenticationRepository = authenticationRepository;
@@ -58,6 +60,7 @@ public class PostServiceImpl implements PostService {
             response.setContent(post.getContent());
             response.setCategory(post.getCategory().getLabel());
             response.setPublishedAt(post.getPublishedAt().toString());
+            response.setImageUrl(extractFirstImage(post.getContent()));
             responses.add(response);
         }
 
@@ -67,8 +70,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void deletePostById(Long id) {
-        if (!repository.existsById(id)) {
-            throw new RuntimeException("Post not found");
+        Posts post = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+        List<String> imageLinks = extractImagePaths(post.getContent());
+        if (!imageLinks.isEmpty()) {
+            deleteImagePaths(imageLinks);
         }
         repository.deleteById(id);
     }
@@ -151,6 +157,37 @@ public class PostServiceImpl implements PostService {
             dto.setCreatedAt(String.valueOf(post.getCreatedAt()));
             return dto;
         });
+    }
+
+    private List<String> extractImagePaths (String htmlContent){
+        List<String> imagePaths = new ArrayList<>();
+        Pattern pattern = Pattern.compile("<img[^>]*src=[\"'](/uploads/[^\"']+)[\"'][^>]*>");
+        Matcher matcher = pattern.matcher(htmlContent);
+        while (matcher.find()) {
+            String imagePath = matcher.group(1);
+            imagePaths.add(imagePath);
+        }
+        return imagePaths;
+    }
+
+    private void deleteImagePaths(List<String> imagePaths) {
+        for (String url : imagePaths) {
+            String filePath = "uploads" + url.replace("/uploads", ""); // Adjust the path as needed
+            try {
+                Files.deleteIfExists(java.nio.file.Paths.get(filePath));
+            } catch (java.io.IOException e) {
+                System.err.println("Không xóa được file: " + filePath);
+            }
+        }
+    }
+
+    private String extractFirstImage(String htmlContent) {
+        Pattern pattern = Pattern.compile("<img[^>]*src=[\"']([^\"']+)[\"'][^>]*>");
+        Matcher matcher = pattern.matcher(htmlContent);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
     }
 
 }

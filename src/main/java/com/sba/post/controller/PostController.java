@@ -100,8 +100,8 @@ public class PostController {
     //danh cho trang course
     @GetMapping("/{category}/{title}")
     public ResponseEntity<PostsResponse> getPostByCategoryAndTitle(
-            @RequestParam String category,
-            @RequestParam String title
+            @PathVariable String category,
+            @PathVariable String title
     ) {
         try {
             Category enumCategory = Category.valueOf(category);
