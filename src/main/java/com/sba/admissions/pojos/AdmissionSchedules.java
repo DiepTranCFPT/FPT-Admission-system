@@ -40,4 +40,6 @@ public class AdmissionSchedules extends BaseEntity {
     @Column(length = 50)
     private String meetLink;
 
+    @Column(name = "verified")
+    private Boolean verified = false;
 }
