@@ -11,6 +11,7 @@ import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
@@ -24,6 +25,9 @@ import java.util.List;
 @Service
 public class GoogleOAuthService {
 
+    @Value("${credentialsfile}")
+    private String credentialsfile;
+
     private static final String APPLICATION_NAME = "Spring Boot Google Calendar Example";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final List<String> SCOPES = Arrays.asList(CalendarScopes.CALENDAR);
@@ -36,8 +40,7 @@ public class GoogleOAuthService {
     }
 
     private Credential authorize() throws Exception {
-        // Load client secrets from credentials.json
-        InputStream in = new FileInputStream("src/main/resources/credentials.json");
+        InputStream in = new FileInputStream(credentialsfile);
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
         // Set up authorization code flow

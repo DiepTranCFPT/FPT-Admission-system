@@ -31,7 +31,6 @@ public class AuthenticationController {
 
     private final IAuthentication authenticationService;
 
-    @Autowired
     public AuthenticationController(IAuthentication authenticationService) {
         this.authenticationService = authenticationService;
 

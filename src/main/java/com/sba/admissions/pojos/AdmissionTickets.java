@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "admissiontickets")
+@org.springframework.data.relational.core.mapping.Table(name = "admissiontickets")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

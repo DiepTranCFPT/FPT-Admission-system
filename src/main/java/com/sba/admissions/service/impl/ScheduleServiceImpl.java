@@ -27,14 +27,18 @@ public class ScheduleServiceImpl implements ScheduleService {
     private AccountUtils accountUtils;
 
     private AdmissionSchedules mapToEntity(ScheduleRequestDTO dto) {
-        Accounts user = accountUtils.getCurrentUser();
-        AdmissionSchedules schedule = new AdmissionSchedules();
-        schedule.setCreateAt(LocalDateTime.now());
-        schedule.setAdmissionAt(dto.getAdmissionAt());
-        schedule.setStatus(ProcessStatus.IN_PROCESS);
-        schedule.setMeetLink("Wait for link");
-        schedule.setUser(user);
-        return schedule;
+        try{
+            Accounts user = accountUtils.getCurrentUser();
+            AdmissionSchedules schedule = new AdmissionSchedules();
+            schedule.setCreateAt(LocalDateTime.now());
+            schedule.setAdmissionAt(dto.getAdmissionAt());
+            schedule.setStatus(ProcessStatus.IN_PROCESS);
+            schedule.setMeetLink("Wait for link");
+            schedule.setUser(user);
+            return schedule;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private ScheduleResponseDTO mapToResponseDTO(AdmissionSchedules schedule) {
