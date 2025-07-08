@@ -65,7 +65,7 @@ public class GoogleOAuthService {
     }
 
     public String getGoogleOAuthAuthorizationUrl() throws Exception {
-        InputStream in = new FileInputStream("src/main/resources/credentials.json");
+        InputStream in = new FileInputStream(credentialsfile);
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
@@ -84,7 +84,7 @@ public class GoogleOAuthService {
      * Đổi mã code lấy Credential (access token) cho staff vừa xác thực Google OAuth
      */
     public Credential exchangeCodeForCredential(String code) throws Exception {
-        InputStream in = new FileInputStream("src/main/resources/credentials.json");
+        InputStream in = new FileInputStream(credentialsfile);
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                 GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, clientSecrets, Collections.singletonList("https://www.googleapis.com/auth/calendar"))
