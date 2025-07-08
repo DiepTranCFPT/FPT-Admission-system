@@ -37,7 +37,7 @@ public class AdmissionTickets {
 
     private ProcessStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private Accounts user;
 }
