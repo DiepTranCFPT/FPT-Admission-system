@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @EqualsAndHashCode(callSuper = true)
-@Table(name = "admissionschedules")
+@org.springframework.data.relational.core.mapping.Table(name = "admissionschedules")
 @Entity
 @Data
 @NoArgsConstructor

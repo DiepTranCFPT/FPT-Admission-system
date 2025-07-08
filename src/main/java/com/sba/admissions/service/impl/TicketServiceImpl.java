@@ -44,8 +44,12 @@ public class TicketServiceImpl implements TicketService {
     }
     @Override
     public AdmissionTickets createTicket(TicketRequestDTO ticketRequestDTO) {
-        AdmissionTickets ticket = mapToEntity(ticketRequestDTO);
-        return ticketRepository.save(ticket);
+        try{
+            AdmissionTickets ticket = mapToEntity(ticketRequestDTO);
+            return ticketRepository.save(ticket);
+             } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

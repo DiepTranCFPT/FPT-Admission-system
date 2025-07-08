@@ -3,6 +3,7 @@ package com.sba.configs;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.ClassPathResource;
@@ -15,7 +16,8 @@ import java.io.InputStream;
 @PropertySource("classpath:application.properties")
 public class FirebaseInitializer {
 
-    private final String firebaseCredentials = "./FirebaseSetting.json";
+    @Value("${firebase.config.path}")
+    private String firebaseCredentials;
 
     @Bean
     public FirebaseAuth firebaseAuth() throws IOException {

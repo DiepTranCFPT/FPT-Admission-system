@@ -13,8 +13,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/applications")
 public class ApplicationController {
-    @Autowired
-    private ApplicationService applicationService;
+
+    private final ApplicationService applicationService;
+
+    public ApplicationController(ApplicationService applicationService) {
+        this.applicationService = applicationService;
+    }
 
     @PostMapping("/create")
     public ResponseEntity<Application> createApplication(@RequestBody ApplicationDTO dto) {

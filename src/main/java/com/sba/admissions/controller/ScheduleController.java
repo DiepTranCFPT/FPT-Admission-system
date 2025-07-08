@@ -21,14 +21,18 @@ import java.util.List;
 @RequestMapping("/api/schedules")
 @Transactional
 public class ScheduleController {
-    @Autowired
-    private ScheduleService scheduleService;
 
-    @Autowired
-    private GoogleCalendarEventService googleCalendarEventService;
+    private final ScheduleService scheduleService;
 
-    @Autowired
-    private GoogleOAuthService googleOAuthService;
+    private final GoogleCalendarEventService googleCalendarEventService;
+
+    private final GoogleOAuthService googleOAuthService;
+
+    public ScheduleController(ScheduleService scheduleService, GoogleCalendarEventService googleCalendarEventService, GoogleOAuthService googleOAuthService) {
+        this.scheduleService = scheduleService;
+        this.googleCalendarEventService = googleCalendarEventService;
+        this.googleOAuthService = googleOAuthService;
+    }
 
     @PostMapping
     public ResponseEntity<ScheduleResponseDTO> createSchedule(@RequestBody LocalDateTime request) {
@@ -63,7 +67,6 @@ public class ScheduleController {
     }
 
     @PutMapping("/meeting-link/{id}")
-    @PreAuthorize("hasRole('STAFF') or hasRole('ADMIN')")
     public ResponseEntity<ScheduleResponseDTO> createMeetingLink(
             @PathVariable String id,
             @RequestParam("code") String code) throws Exception {
