@@ -10,8 +10,11 @@ import com.sba.enums.ProcessStatus;
 import com.sba.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,7 +34,6 @@ public class ScheduleServiceImpl implements ScheduleService {
         schedule.setStatus(ProcessStatus.IN_PROCESS);
         schedule.setMeetLink("Wait for link");
         schedule.setUser(user);
-        schedule.setAdmissionAt(null);
         return schedule;
     }
 
@@ -47,22 +49,25 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 //dang ky tu van bang gg meet
     @Override
-    public ScheduleResponseDTO createSchedule(ScheduleRequestDTO dto) {
+    public ScheduleResponseDTO createSchedule(LocalDateTime admissionAt) {
+        if(admissionAt == null || admissionAt.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Admission date cannot be null or in the past");
+        }
+        ScheduleRequestDTO dto = new ScheduleRequestDTO();
+        dto.setAdmissionAt(admissionAt);
         AdmissionSchedules schedule = mapToEntity(dto);
-        AdmissionSchedules saved = scheduleRepository.save(schedule);
-        return mapToResponseDTO(saved);
+        return mapToResponseDTO(scheduleRepository.save(schedule));
     }
 
     @Override
-    public ScheduleResponseDTO getScheduleById(String id) {
+    public AdmissionSchedules getScheduleById(String id) {
         return scheduleRepository.findById(id)
-            .map(this::mapToResponseDTO)
             .orElseThrow(() -> new RuntimeException("Schedule not found"));
     }
 
     @Override
-    public List<ScheduleResponseDTO> getAllSchedules() {
-        return scheduleRepository.findAll().stream().map(this::mapToResponseDTO).toList();
+    public List<AdmissionSchedules> getAllSchedules() {
+        return scheduleRepository.findAll();
     }
 
     @Override
@@ -82,19 +87,17 @@ public class ScheduleServiceImpl implements ScheduleService {
         scheduleRepository.deleteById(id);
     }
 //Staff phan hoi ve lich hen tu van
-    @PreAuthorize("hasRole('STAFF')")
+//    @PreAuthorize("hasAuthority('ROLE_STAFF')")
     @Override
-    public ScheduleResponseDTO respontStaff(String googleMeetLink, String scheduleId) {
+    @Transactional
+    public ScheduleResponseDTO respontStaff(String googleMeetLink, String scheduleId ) {
         Accounts user = accountUtils.getCurrentUser();
+        SecurityContextHolder.getContext().getAuthentication().getName();
         AdmissionSchedules schedule = scheduleRepository.findById(scheduleId).orElseThrow(() -> new RuntimeException("Schedule not found"));
-        if (schedule.getStatus() != ProcessStatus.IN_PROCESS) {
-            throw new RuntimeException("Schedule is not in process");
-        }
         schedule.setMeetLink(googleMeetLink);
         schedule.setStatus(ProcessStatus.COMPLETED);
         schedule.setStaff(user);
-        schedule.setAdmissionAt(LocalDateTime.now());
-        scheduleRepository.save(schedule);
-        return mapToResponseDTO(schedule);
+        schedule.setCreateAt(LocalDateTime.now());
+        return mapToResponseDTO(scheduleRepository.save(schedule));
     }
 }

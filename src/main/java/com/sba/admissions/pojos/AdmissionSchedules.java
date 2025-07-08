@@ -6,10 +6,12 @@ import com.sba.utils.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@EqualsAndHashCode(callSuper = true)
 @Table(name = "admissionschedules")
 @Entity
 @Data
@@ -20,7 +22,7 @@ public class AdmissionSchedules extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "staff_id", referencedColumnName = "id")
     private Accounts staff;
 
@@ -31,11 +33,13 @@ public class AdmissionSchedules extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ProcessStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private Accounts user;
 
     @Column(length = 50)
     private String meetLink;
 
+    @Column(name = "verified")
+    private Boolean verified = false;
 }

@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)
+@Table(name = "posts")
 public class Post extends BaseEntity {
 
     @Id
