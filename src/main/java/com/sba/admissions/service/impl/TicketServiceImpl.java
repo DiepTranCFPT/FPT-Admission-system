@@ -36,7 +36,10 @@ public class TicketServiceImpl implements TicketService {
         ticket.setContent(dto.getContent());
         ticket.setResponse("Waiting for response");
         ticket.setStatus(ProcessStatus.IN_PROCESS);
-        ticket.setUser(user);
+        if(user !=  null){
+            ticket.setUser(user);
+        }
+
         return ticket;
     }
     @Override
