@@ -13,16 +13,18 @@ import java.io.IOException;
 import java.io.InputStream;
 
 @Service
-@PropertySource("classpath:application.properties")
 public class FirebaseInitializer {
 
-    @Value("${firebase.config.path}")
-    private String firebaseCredentials;
+    private final String firebaseConfigPath;
+
+    public FirebaseInitializer(@Value("${firebase.config.path}") String firebaseConfigPath) {
+        this.firebaseConfigPath = firebaseConfigPath;
+    }
 
     @Bean
     public FirebaseAuth firebaseAuth() throws IOException {
         if (FirebaseApp.getApps().isEmpty()) {
-            InputStream serviceAccount = new ClassPathResource(firebaseCredentials).getInputStream();
+            InputStream serviceAccount = new ClassPathResource(firebaseConfigPath).getInputStream();
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(com.google.auth.oauth2.GoogleCredentials.fromStream(serviceAccount))
                     .build();
