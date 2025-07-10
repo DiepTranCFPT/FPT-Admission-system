@@ -141,7 +141,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostsResponse getPostByCategoryAndTitle(Category category, String title) {
-        Posts post = repository.findByCategoryAndTitleContainingIgnoreCaseAndStatusPublished(category, title)
+        Posts post = repository.findByCategoryAndTitleContainingIgnoreCaseAndStatus(category, title, Status.PUBLISHED)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
         PostsResponse response = new PostsResponse();
         response.setTitle(post.getTitle());
