@@ -25,7 +25,7 @@ public interface PostRepository extends JpaRepository<Posts, Long> , JpaSpecific
             Pageable pageable
     );
 
-    Optional<Posts> findByCategoryAndTitleContainingIgnoreCase(
+    Optional<Posts> findByCategoryAndTitleContainingIgnoreCaseAAndStatusPublished(
             Category category,
             String title
     );
