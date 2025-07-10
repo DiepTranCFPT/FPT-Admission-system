@@ -2,7 +2,7 @@ package com.sba.post.service;
 
 import com.sba.accounts.pojos.Accounts;
 import com.sba.authentications.repositories.AuthenticationRepository;
-import com.sba.post.Specification.PostSpecification;
+import com.sba.post.specification.PostSpecification;
 import com.sba.post.dto.request.PostCreateAndUpdateRequest;
 import com.sba.post.dto.request.PostFilterRequest;
 import com.sba.post.dto.response.PostsResponse;
@@ -102,6 +102,9 @@ public class PostServiceImpl implements PostService {
         post.setCategory(category);
 
         Accounts account = authenticationRepository.findById(id).orElseThrow();
+        System.out.println("userId: " + id);
+        System.out.println("Found account: " + account.getId());
+        System.out.println("Found account: " + account.getId());
         post.setAccounts(account);
         repository.save(post);
     }
@@ -116,7 +119,7 @@ public class PostServiceImpl implements PostService {
         post.setTitle(request.getTitle());
         post.setContent(request.getContent());
         post.setCategory(Category.valueOf(request.getCategory().toUpperCase()));
-
+        post.setStatus(Status.DRAFT);
         repository.save(post);
     }
 
@@ -161,7 +164,6 @@ public class PostServiceImpl implements PostService {
             PostsResponse dto = new PostsResponse();
             dto.setId(post.getId());
             dto.setTitle(post.getTitle());
-            dto.setContent(post.getContent());
             dto.setCategory(post.getCategory().name());
             dto.setPublishedAt(String.valueOf(post.getPublishedAt()));
             dto.setStatus(post.getStatus().name());
@@ -183,7 +185,7 @@ public class PostServiceImpl implements PostService {
 
     private void deleteImagePaths(List<String> imagePaths) {
         for (String url : imagePaths) {
-            String filePath = "uploads" + url.replace("/uploads", ""); // Adjust the path as needed
+            String filePath = "uploads" + url.replace("/uploads", "");
             try {
                 Files.deleteIfExists(java.nio.file.Paths.get(filePath));
             } catch (java.io.IOException e) {

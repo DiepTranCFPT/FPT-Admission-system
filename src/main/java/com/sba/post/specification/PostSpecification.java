@@ -1,4 +1,4 @@
-package com.sba.post.Specification;
+package com.sba.post.specification;
 
 import com.sba.post.dto.request.PostFilterRequest;
 import com.sba.post.entity.Posts;

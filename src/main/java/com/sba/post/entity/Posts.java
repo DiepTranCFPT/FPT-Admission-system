@@ -15,7 +15,7 @@ import java.util.List;
 
 @Entity(name = "Posts")
 @Data
-public class Posts extends BaseEntity {
+public class Posts {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
