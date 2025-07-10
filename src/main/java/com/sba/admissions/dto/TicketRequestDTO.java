@@ -17,5 +17,6 @@ public class TicketRequestDTO {
     private String content;
     private String response;
     private String status;
-    private String userId;
+    private String userId ;
+    private String email;
 }
