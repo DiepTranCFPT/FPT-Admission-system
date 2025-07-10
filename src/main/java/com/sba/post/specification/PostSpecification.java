@@ -1,7 +1,7 @@
 package com.sba.post.specification;
 
 import com.sba.post.dto.request.PostFilterRequest;
-import com.sba.post.entity.Posts;
+import com.sba.post.pojo.Posts;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 

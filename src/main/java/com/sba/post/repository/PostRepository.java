@@ -1,6 +1,6 @@
 package com.sba.post.repository;
 
-import com.sba.post.entity.Posts;
+import com.sba.post.pojo.Posts;
 import com.sba.post.enums.Category;
 import com.sba.post.enums.Status;
 import org.springframework.data.jpa.repository.JpaRepository;

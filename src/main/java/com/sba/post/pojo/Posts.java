@@ -1,17 +1,14 @@
-package com.sba.post.entity;
+package com.sba.post.pojo;
 
 import com.sba.accounts.pojos.Accounts;
 import com.sba.post.enums.Category;
 import com.sba.post.enums.Status;
-import com.sba.utils.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity(name = "Posts")
 @Data
