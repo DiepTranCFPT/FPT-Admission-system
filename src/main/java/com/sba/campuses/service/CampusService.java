@@ -1,16 +1,17 @@
 package com.sba.campuses.service;
 
 
+import com.sba.campuses.dto.CampusRequest;
 import com.sba.campuses.pojos.Campus;
 
 import java.util.List;
 
 public interface CampusService {
-    List<Campus> getAllCampuses();
+    List<Campus> getAll();
 
-    Campus save(Campus campus);
+    Campus save(CampusRequest campusRequest);
 
-    Campus updateCampus(Campus campus);
+    Campus update(String id, Campus campus);
 
-    void deleteCampus(String id);
+    void delete(String id);
 }

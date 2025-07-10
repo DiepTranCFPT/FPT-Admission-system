@@ -14,7 +14,7 @@ public class MajorServiceImp implements MajorService {
     private MajorRepository majorRepository;
 
     @Override
-    public List<Major> getAllMajors() {
+    public List<Major> getAll() {
         return majorRepository.findAll();
     }
 
@@ -24,12 +24,12 @@ public class MajorServiceImp implements MajorService {
     }
 
     @Override
-    public Major updateMajor(Major major) {
+    public Major update(String id, Major major) {
         return majorRepository.save(major);
     }
 
     @Override
-    public void deleteMajor(String id) {
+    public void delete(String id) {
         majorRepository.deleteById(id);
     }
 }

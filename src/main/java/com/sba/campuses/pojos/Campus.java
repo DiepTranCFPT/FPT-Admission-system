@@ -29,7 +29,7 @@ public class Campus extends BaseEntity {
 
     private String email;
 
-    @OneToMany(cascade = jakarta.persistence.CascadeType.ALL, fetch = jakarta.persistence.FetchType.LAZY)
+    @OneToMany(cascade = jakarta.persistence.CascadeType.ALL)
     private List<Major> major;
 
 

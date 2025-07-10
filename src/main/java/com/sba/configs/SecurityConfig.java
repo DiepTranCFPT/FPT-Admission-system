@@ -45,6 +45,8 @@ public class SecurityConfig {
             "/api/test/public-api",
             "/api/authen/profile",
             "/api/authen/firebase-login",
+            "/api/campuses/**",
+            "/api/majors/**",
     };
     private final String[] PUBLIC_ENDPOINTS_METHOD = {
             "/swagger-ui/**",
