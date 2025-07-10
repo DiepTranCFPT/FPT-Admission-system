@@ -47,6 +47,10 @@ public class SecurityConfig {
             "/api/authen/firebase-login",
             "/api/campuses/**",
             "/api/majors/**",
+            "/login/oauth2/code/google",
+            "/api/posts/latest",
+            "/api/posts/{id}",
+
     };
     private final String[] PUBLIC_ENDPOINTS_METHOD = {
             "/swagger-ui/**",
@@ -77,6 +81,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(PUBLIC_ENDPOINTS_METHOD).hasAnyRole( "ADMIN")
+                        .requestMatchers("/api/upload-image").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())

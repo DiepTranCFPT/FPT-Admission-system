@@ -38,8 +38,11 @@ public class TicketServiceImpl implements TicketService {
         ticket.setStatus(ProcessStatus.IN_PROCESS);
         if(user !=  null){
             ticket.setUser(user);
+            ticket.setEmail(user.getEmail());
         }
-
+        else {
+            ticket.setEmail(dto.getEmail());
+        }
         return ticket;
     }
     @Override

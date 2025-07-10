@@ -37,6 +37,8 @@ public class AdmissionTickets {
 
     private ProcessStatus status;
 
+    private String email;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private Accounts user;
