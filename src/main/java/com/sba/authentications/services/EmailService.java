@@ -1,6 +1,7 @@
 package com.sba.authentications.services;
 
 
+import com.sba.admissions.pojos.AdmissionTickets;
 import com.sba.model.EmailDetail;
 import com.sba.authentications.repositories.AuthenticationRepository;
 
@@ -11,6 +12,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+
+import java.util.Map;
 
 
 @Service
@@ -30,60 +33,52 @@ public class EmailService {
 
     public void sendMailTemplate(EmailDetail emailDetail) {
         try {
+            // 1. Lấy dữ liệu bổ sung
+            Map<String, Object> extra = emailDetail.getExtra();   // cần có getExtra()
 
+            // 2. Tạo context cho Thymeleaf
             Context context = new Context();
             context.setVariable("username", emailDetail.getName());
-            context.setVariable("buttonValue", emailDetail.getButtonValue() != null ? emailDetail.getButtonValue() : "Verify Email");
-            context.setVariable("link", emailDetail.getLink());
-            context.setVariable("email", emailDetail.getRecipient());
+            context.setVariable("email",   emailDetail.getRecipient());
 
-            String text = templateEngine.process("emailtemplate", context);
+            // --- Các biến riêng cho template phản hồi ticket ---
+            if (extra != null && extra.get("ticket") instanceof AdmissionTickets ticket) {
+                context.setVariable("topic",     ticket.getTopic());
+                context.setVariable("content",   ticket.getContent());
+                context.setVariable("response",  ticket.getResponse());
+            }
 
+            // Nếu dùng chung hàm cho nhiều template, bạn có thể kiểm tra tên template:
+            // if ("response-ticket-template".equals(emailDetail.getTemplate()))
+
+            // 3. Sinh HTML
+            String template = emailDetail.getTemplate() != null
+                    ? emailDetail.getTemplate()
+                    : "response-ticket-templatee";
+            String html = templateEngine.process(template, context);
+            // 4. Gửi mail
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+            helper.setFrom("swpproject2024@gmail.com");
+            helper.setTo(emailDetail.getRecipient());
+            helper.setSubject(emailDetail.getSubject());
+            helper.setText(html, true);
 
-            mimeMessageHelper.setFrom("swpproject2024@gmail.com");
-            mimeMessageHelper.setTo(emailDetail.getRecipient());
-            mimeMessageHelper.setText(text, true);
-            mimeMessageHelper.setSubject(emailDetail.getSubject());
-
+            // Đính kèm (nếu có)
             if (emailDetail.getAttachment() != null) {
-                mimeMessageHelper.addAttachment(emailDetail.getAttachment().getFilename(), emailDetail.getAttachment());
+                helper.addAttachment(emailDetail.getAttachment().getFilename(),
+                        emailDetail.getAttachment());
             }
 
             javaMailSender.send(mimeMessage);
-        } catch (MessagingException messagingException) {
-            messagingException.printStackTrace();
+        } catch (MessagingException e) {
+            e.printStackTrace();
         }
     }
 
 
-    public void sendMailTemplateOwner(EmailDetail emailDetail) {
-        try {
-            Context context = new Context();
-            context.setVariable("username", emailDetail.getName());
-            context.setVariable("buttonValue", emailDetail.getButtonValue());
-            context.setVariable("link", emailDetail.getLink());
-            context.setVariable("email", emailDetail.getRecipient());
 
-            String text = templateEngine.process("emailtemplateowner", context);
 
-            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
-
-            mimeMessageHelper.setFrom("swpproject2024@gmail.com");
-            mimeMessageHelper.setTo(emailDetail.getRecipient());
-            mimeMessageHelper.setText(text, true);
-            mimeMessageHelper.setSubject(emailDetail.getSubject());
-
-            if (emailDetail.getAttachment() != null) {
-                mimeMessageHelper.addAttachment(emailDetail.getAttachment().getFilename(), emailDetail.getAttachment());
-            }
-            javaMailSender.send(mimeMessage);
-        } catch (MessagingException messagingException) {
-            messagingException.printStackTrace();
-        }
-    }
 
     public void sendMailTemplateForgot(EmailDetail emailDetail) {
         try {
