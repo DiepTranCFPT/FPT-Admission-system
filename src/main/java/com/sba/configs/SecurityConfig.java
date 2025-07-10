@@ -81,6 +81,7 @@ public class SecurityConfig {
                         .requestMatchers(PUBLIC_ENDPOINTS_METHOD).hasAnyRole( "ADMIN")
                         .requestMatchers("/api/upload-image").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers("/api/tickets").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
