@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
 
+import java.util.Map;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,4 +20,7 @@ public class EmailDetail {
     private String link;
     private FileSystemResource attachment;
     private String name;
+    private String template;
+    private Map<String, Object> extra;
+
 }

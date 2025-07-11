@@ -341,8 +341,6 @@ public class AuthenticationService implements IAuthentication {
     @Override
     public void forgotPassword(ForgotPasswordRequest forgotPasswordRequest) throws AccountNotFoundException {
         Accounts account = authenticationRepository.findByEmail(forgotPasswordRequest.getEmail()).orElseThrow(()-> new AccountNotFoundException("Account not found"));
-
-
         EmailDetail emailDetail = new EmailDetail();
         emailDetail.setRecipient(forgotPasswordRequest.getEmail());
         emailDetail.setSubject("Reset Password for account " + forgotPasswordRequest.getEmail() + "!!!");
