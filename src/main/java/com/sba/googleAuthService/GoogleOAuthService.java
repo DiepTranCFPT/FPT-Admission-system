@@ -25,8 +25,8 @@ import java.util.List;
 @Service
 public class GoogleOAuthService {
 
-    @Value("${credentialsfile}")
-    private String credentialsfile;
+    @Value("${credentialsFile}")
+    private String credentialsFile;
 
     private static final String APPLICATION_NAME = "Spring Boot Google Calendar Example";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
@@ -91,11 +91,11 @@ public class GoogleOAuthService {
     }
 
     private GoogleClientSecrets loadClientSecrets() throws Exception {
-        if (credentialsfile == null || credentialsfile.isBlank()) {
+        if (credentialsFile == null || credentialsFile.isBlank()) {
             throw new IllegalStateException("Missing 'credentialsfile' environment variable.");
         }
 
-        ByteArrayInputStream stream = new ByteArrayInputStream(credentialsfile.getBytes(StandardCharsets.UTF_8));
+        ByteArrayInputStream stream = new ByteArrayInputStream(credentialsFile.getBytes(StandardCharsets.UTF_8));
         return GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(stream));
     }
 }
