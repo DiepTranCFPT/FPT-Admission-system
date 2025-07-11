@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "chat_box_sessions")
 public class ChatBoxSession {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

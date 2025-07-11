@@ -18,7 +18,6 @@ public class BaseEntity {
 
     private LocalDateTime timeUpdatedLast;
 
-    //    @Column(name = "is_delete")
     @Builder.Default
     protected boolean deleted = false;
 

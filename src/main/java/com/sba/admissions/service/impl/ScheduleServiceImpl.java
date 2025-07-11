@@ -6,14 +6,21 @@ import com.sba.admissions.dto.ScheduleResponseDTO;
 import com.sba.admissions.pojos.AdmissionSchedules;
 import com.sba.admissions.repository.ScheduleRepository;
 import com.sba.admissions.service.ScheduleService;
+import com.sba.authentications.services.EmailService;
 import com.sba.enums.ProcessStatus;
+import com.sba.model.EmailDetail;
 import com.sba.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -23,16 +30,22 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Autowired
     private AccountUtils accountUtils;
 
+    @Autowired
+    private EmailService emailService;
+
     private AdmissionSchedules mapToEntity(ScheduleRequestDTO dto) {
-        Accounts user = accountUtils.getCurrentUser();
-        AdmissionSchedules schedule = new AdmissionSchedules();
-        schedule.setCreateAt(LocalDateTime.now());
-        schedule.setAdmissionAt(dto.getAdmissionAt());
-        schedule.setStatus(ProcessStatus.IN_PROCESS);
-        schedule.setMeetLink("Wait for link");
-        schedule.setUser(user);
-        schedule.setAdmissionAt(null);
-        return schedule;
+        try{
+            Accounts user = accountUtils.getCurrentUser();
+            AdmissionSchedules schedule = new AdmissionSchedules();
+            schedule.setCreateAt(LocalDateTime.now());
+            schedule.setAdmissionAt(dto.getAdmissionAt());
+            schedule.setStatus(ProcessStatus.IN_PROCESS);
+            schedule.setMeetLink("Wait for link");
+            schedule.setUser(user);
+            return schedule;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private ScheduleResponseDTO mapToResponseDTO(AdmissionSchedules schedule) {
@@ -47,22 +60,25 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 //dang ky tu van bang gg meet
     @Override
-    public ScheduleResponseDTO createSchedule(ScheduleRequestDTO dto) {
+    public ScheduleResponseDTO createSchedule(LocalDateTime admissionAt) {
+        if(admissionAt == null || admissionAt.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Admission date cannot be null or in the past");
+        }
+        ScheduleRequestDTO dto = new ScheduleRequestDTO();
+        dto.setAdmissionAt(admissionAt);
         AdmissionSchedules schedule = mapToEntity(dto);
-        AdmissionSchedules saved = scheduleRepository.save(schedule);
-        return mapToResponseDTO(saved);
+        return mapToResponseDTO(scheduleRepository.save(schedule));
     }
 
     @Override
-    public ScheduleResponseDTO getScheduleById(String id) {
+    public AdmissionSchedules getScheduleById(String id) {
         return scheduleRepository.findById(id)
-            .map(this::mapToResponseDTO)
             .orElseThrow(() -> new RuntimeException("Schedule not found"));
     }
 
     @Override
-    public List<ScheduleResponseDTO> getAllSchedules() {
-        return scheduleRepository.findAll().stream().map(this::mapToResponseDTO).toList();
+    public List<AdmissionSchedules> getAllSchedules() {
+        return scheduleRepository.findAll();
     }
 
     @Override
@@ -82,19 +98,39 @@ public class ScheduleServiceImpl implements ScheduleService {
         scheduleRepository.deleteById(id);
     }
 //Staff phan hoi ve lich hen tu van
-    @PreAuthorize("hasRole('STAFF')")
+//    @PreAuthorize("hasAuthority('ROLE_STAFF')")
     @Override
-    public ScheduleResponseDTO respontStaff(String googleMeetLink, String scheduleId) {
+    @Transactional
+    public ScheduleResponseDTO respontStaff(String googleMeetLink, String scheduleId ) {
         Accounts user = accountUtils.getCurrentUser();
-        AdmissionSchedules schedule = scheduleRepository.findById(scheduleId).orElseThrow(() -> new RuntimeException("Schedule not found"));
-        if (schedule.getStatus() != ProcessStatus.IN_PROCESS) {
-            throw new RuntimeException("Schedule is not in process");
-        }
+
+        AdmissionSchedules schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new RuntimeException("Schedule not found"));
+
+        // Cập nhật schedule
         schedule.setMeetLink(googleMeetLink);
         schedule.setStatus(ProcessStatus.COMPLETED);
         schedule.setStaff(user);
-        schedule.setAdmissionAt(LocalDateTime.now());
-        scheduleRepository.save(schedule);
-        return mapToResponseDTO(schedule);
+        schedule.setCreateAt(LocalDateTime.now());
+
+        AdmissionSchedules updatedSchedule = scheduleRepository.save(schedule);
+
+        // === GỬI EMAIL ===
+        Map<String, Object> extra = new HashMap<>();
+        extra.put("schedule", updatedSchedule);
+
+        EmailDetail emailDetail = new EmailDetail();
+        emailDetail.setRecipient(updatedSchedule.getUser().getEmail()); // email sinh viên
+        emailDetail.setSubject("Lịch hẹn tư vấn tuyển sinh FPTU");
+        emailDetail.setName(user.getUsername()); // tên nhân viên phụ trách
+        emailDetail.setLink(googleMeetLink);
+        emailDetail.setExtra(extra);
+
+        emailDetail.setTemplate("schedule-meeting-template");
+
+        new Thread(() -> emailService.sendMailTemplate(emailDetail)).start();
+
+        return mapToResponseDTO(updatedSchedule);
     }
+
 }

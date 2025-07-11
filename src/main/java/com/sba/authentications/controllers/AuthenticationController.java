@@ -31,7 +31,6 @@ public class AuthenticationController {
 
     private final IAuthentication authenticationService;
 
-    @Autowired
     public AuthenticationController(IAuthentication authenticationService) {
         this.authenticationService = authenticationService;
 
@@ -122,5 +121,9 @@ public class AuthenticationController {
         }
         return null;
     }
-
+    @PostMapping("/staff")
+    @Operation(summary = "Tao tai khoan nhan vien (ADMIN)")
+    public CompletableFuture<ResponseObject> createStaff(@RequestParam String id) throws AccountNotFoundException {
+        return authenticationService.createStaff(id);
+    }
 }

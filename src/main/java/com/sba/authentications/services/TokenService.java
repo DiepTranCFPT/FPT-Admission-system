@@ -30,7 +30,6 @@ public class TokenService {
     String generateToken(Accounts accounts) {
         try {
             List<String> roles = List.of("ROLE_" + accounts.getRole().name());
-
             JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
             JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                     .subject(accounts.getEmail())
@@ -63,7 +62,6 @@ public class TokenService {
         } else {
             throw new AuthException("Token invalid");
         }
-
     }
 
     // Validate the token (check expiration and signature)

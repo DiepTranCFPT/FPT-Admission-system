@@ -5,17 +5,22 @@ import com.sba.accounts.pojos.Accounts;
 import com.sba.admissions.dto.TicketRequestDTO;
 import com.sba.admissions.pojos.AdmissionTickets;
 import com.sba.authentications.repositories.AuthenticationRepository;
+import com.sba.authentications.services.EmailService;
 import com.sba.enums.ProcessStatus;
 import com.sba.admissions.repository.TicketRepository;
 import com.sba.admissions.service.TicketService;
+import com.sba.model.EmailDetail;
 import com.sba.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TicketServiceImpl implements TicketService {
@@ -23,6 +28,10 @@ public class TicketServiceImpl implements TicketService {
     private TicketRepository ticketRepository;
     @Autowired
     private AuthenticationRepository accountsRepository;
+
+    @Autowired
+    private EmailService emailService;
+
 
     @Autowired
     private AccountUtils accountUtils;
@@ -36,23 +45,39 @@ public class TicketServiceImpl implements TicketService {
         ticket.setContent(dto.getContent());
         ticket.setResponse("Waiting for response");
         ticket.setStatus(ProcessStatus.IN_PROCESS);
-        ticket.setUser(user);
+        if(user !=  null){
+            ticket.setUser(user);
+            ticket.setEmail(user.getEmail());
+        }
+        else {
+            ticket.setEmail(dto.getEmail());
+        }
         return ticket;
     }
     @Override
     public AdmissionTickets createTicket(TicketRequestDTO ticketRequestDTO) {
-        AdmissionTickets ticket = mapToEntity(ticketRequestDTO);
-        return ticketRepository.save(ticket);
+        try{
+            AdmissionTickets ticket = mapToEntity(ticketRequestDTO);
+            return ticketRepository.save(ticket);
+             } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public Optional<AdmissionTickets> getTicketById(String id) {
+        AdmissionTickets ticket = ticketRepository.findById(id).orElseThrow(()-> new RuntimeException("Ticket not found"));
+        if(ticket.isDeleted()){
+            throw new RuntimeException("Ticket has been deleted ");
+        }
         return ticketRepository.findById(id);
     }
 
     @Override
     public List<AdmissionTickets> getAllTickets() {
-        return ticketRepository.findAll();
+        return ticketRepository.findAll().stream()
+                .filter(admissionTickets -> !admissionTickets.isDeleted())
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -67,12 +92,17 @@ public class TicketServiceImpl implements TicketService {
     }
     @Override
     public void deleteTicket(String id) {
-        ticketRepository.deleteById(id);
+        AdmissionTickets ticket = ticketRepository.findById(id).orElseThrow(() -> new RuntimeException("Ticket not found"));
+        if(ticket.isDeleted()){
+            throw new RuntimeException("Ticket has been deleted");
+        }
+        ticket.setDeleted(true);
+        ticketRepository.save(ticket);
     }
 
     @PreAuthorize("hasRole('STAFF')")
     @Override
-    public AdmissionTickets responeToTicket(String id, String response) {
+    public AdmissionTickets responseToTicket(String id, String response) {
         Accounts user = accountUtils.getCurrentUser();
         AdmissionTickets admissionTicket = ticketRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
@@ -80,8 +110,24 @@ public class TicketServiceImpl implements TicketService {
             admissionTicket.setResponse(response);
             admissionTicket.setStaff(user);
             admissionTicket.setStatus(ProcessStatus.COMPLETED);
-        }
-        else {
+            //sent mail
+            Map<String, Object> extra = new HashMap<>();
+            extra.put("ticket", admissionTicket);
+            EmailDetail emailDetail = new EmailDetail();
+            emailDetail.setRecipient(admissionTicket.getEmail());
+            emailDetail.setSubject("Response Ticket FPTU");
+            emailDetail.setName(user.getUsername());
+            emailDetail.setExtra(extra);
+
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    emailService.sendMailTemplate(emailDetail);
+                }
+            };
+
+            new Thread(r).start();
+        } else {
             throw new RuntimeException("Ticket is not in process");
         }
         return ticketRepository.save(admissionTicket);

@@ -14,6 +14,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "majors")
 public class Major extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -31,7 +32,6 @@ public class Major extends BaseEntity {
     @Column(name = "Childmajors")
     private List<Major> majors;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Campus campus;
+
 
 }
