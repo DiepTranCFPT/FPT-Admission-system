@@ -13,7 +13,7 @@ public interface TicketService {
     AdmissionTickets updateTicket(String id, TicketRequestDTO ticket);
     void deleteTicket(String id);
 
-    AdmissionTickets responeToTicket(String id, String response);
+    AdmissionTickets responseToTicket(String id, String response);
 
 
 }
