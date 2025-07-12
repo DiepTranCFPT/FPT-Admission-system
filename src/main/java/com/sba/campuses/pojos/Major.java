@@ -32,6 +32,7 @@ public class Major extends BaseEntity {
     @Column(name = "Childmajors")
     private List<Major> majors;
 
-
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Campus campus;
 
 }

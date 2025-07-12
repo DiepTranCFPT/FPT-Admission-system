@@ -15,23 +15,14 @@ public class TicketController {
 
     private final TicketService ticketService;
 
-    @Autowired
     public TicketController(TicketService ticketService) {
         this.ticketService = ticketService;
     }
 
     @PostMapping
-    public ResponseEntity<AdmissionTickets> createTicket(@RequestParam String content , @RequestParam String response ,@RequestBody String email) {
-        try{
-            TicketRequestDTO ticketRequestDTO = new TicketRequestDTO();
-            ticketRequestDTO.setContent(content);
-            ticketRequestDTO.setTopic(response);
-            ticketRequestDTO.setEmail(email);
-            AdmissionTickets created = ticketService.createTicket(ticketRequestDTO);
-            return ResponseEntity.ok(created);
-        }catch (RuntimeException e){
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<AdmissionTickets> createTicket(@RequestBody TicketRequestDTO ticketRequestDTO) {
+        AdmissionTickets created = ticketService.createTicket(ticketRequestDTO);
+        return ResponseEntity.ok(created);
     }
 
     @GetMapping("/{id}")
@@ -48,29 +39,20 @@ public class TicketController {
 
     @PutMapping("/{id}")
     public ResponseEntity<AdmissionTickets> updateTicket(@PathVariable String id, @RequestBody TicketRequestDTO ticketRequestDTO) {
-        try{
-            AdmissionTickets updated = ticketService.updateTicket(id, ticketRequestDTO);
-            return ResponseEntity.ok(updated);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-
+        AdmissionTickets updated = ticketService.updateTicket(id, ticketRequestDTO);
+        return ResponseEntity.ok(updated);
     }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteTicket(@PathVariable String id) {
+    public ResponseEntity<Void> deleteTicket(@PathVariable String id) {
         ticketService.deleteTicket(id);
-        return ResponseEntity.ok("delete is success");
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/response_ticket/{id}")
     public ResponseEntity<AdmissionTickets> responseToTicket(@PathVariable String id, @RequestBody String response) {
-        try {
-            AdmissionTickets updated = ticketService.responseToTicket(id, response);
-            return ResponseEntity.ok(updated);
-        }catch (RuntimeException e){
-            return ResponseEntity.badRequest().build();
-        }
-
+        AdmissionTickets updated = ticketService.responeToTicket(id, response);
+        return ResponseEntity.ok(updated);
     }
 }
 

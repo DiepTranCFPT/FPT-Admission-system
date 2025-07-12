@@ -2,9 +2,7 @@ package com.sba.admissions.pojos;
 
 import com.sba.accounts.pojos.Accounts;
 import com.sba.enums.ProcessStatus;
-import com.sba.utils.BaseEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,13 +14,13 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdmissionTickets extends BaseEntity {
+public class AdmissionTickets {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "staff_id", referencedColumnName = "id")
     private Accounts staff;
 
@@ -39,7 +37,6 @@ public class AdmissionTickets extends BaseEntity {
 
     private ProcessStatus status;
 
-    @NotNull
     private String email;
 
     @ManyToOne(fetch = FetchType.EAGER)

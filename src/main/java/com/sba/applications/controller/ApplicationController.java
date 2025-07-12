@@ -1,8 +1,10 @@
 package com.sba.applications.controller;
 
 import com.sba.applications.dto.ApplicationDTO;
+
 import com.sba.applications.pojos.Application;
 import com.sba.applications.service.ApplicationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,9 +56,9 @@ public class ApplicationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteApplication(@PathVariable String id) {
+    public ResponseEntity<Void> deleteApplication(@PathVariable String id) {
         applicationService.deleteApplication(id);
-        return ResponseEntity.ok("Application deleted");
+        return ResponseEntity.noContent().build();
     }
 
 }
