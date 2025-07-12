@@ -1,6 +1,6 @@
 package com.sba.post.repository;
 
-import com.sba.post.entity.Posts;
+import com.sba.post.pojo.Posts;
 import com.sba.post.enums.Category;
 import com.sba.post.enums.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,9 +25,10 @@ public interface PostRepository extends JpaRepository<Posts, Long> , JpaSpecific
             Pageable pageable
     );
 
-    Optional<Posts> findByCategoryAndTitleContainingIgnoreCase(
+    Optional<Posts> findByCategoryAndTitleContainingIgnoreCaseAndStatus(
             Category category,
-            String title
+            String title,
+            Status status
     );
 
 }

@@ -6,7 +6,7 @@ import com.sba.post.specification.PostSpecification;
 import com.sba.post.dto.request.PostCreateAndUpdateRequest;
 import com.sba.post.dto.request.PostFilterRequest;
 import com.sba.post.dto.response.PostsResponse;
-import com.sba.post.entity.Posts;
+import com.sba.post.pojo.Posts;
 import com.sba.post.enums.Category;
 import com.sba.post.enums.Status;
 import com.sba.post.repository.PostRepository;
@@ -141,11 +141,12 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostsResponse getPostByCategoryAndTitle(Category category, String title) {
-        Posts post = repository.findByCategoryAndTitleContainingIgnoreCase(category, title)
+        Posts post = repository.findByCategoryAndTitleContainingIgnoreCaseAndStatus(category, title, Status.PUBLISHED)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
         PostsResponse response = new PostsResponse();
         response.setTitle(post.getTitle());
         response.setContent(post.getContent());
+        response.setId(post.getId());
         return response;
     }
 
