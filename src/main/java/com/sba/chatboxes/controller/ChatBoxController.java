@@ -24,9 +24,9 @@ public class ChatBoxController {
         return ResponseEntity.ok(savedSession);
     }
 
-    @GetMapping("/sessions")
-    public ResponseEntity<List<ChatSessionDTO>> getAllSessions() {
-        return ResponseEntity.ok(chatBoxService.getAllSessions());
+    @GetMapping("/sessions/{userId}")
+    public ResponseEntity<List<ChatSessionDTO>> getAllSessions(@PathVariable String userId) {
+        return ResponseEntity.ok(chatBoxService.getAllSessionsByUserId(userId));
     }
 
     @GetMapping("/sessions/{sessionId}/messages")

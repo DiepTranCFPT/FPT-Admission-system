@@ -15,7 +15,7 @@ public interface ChatBoxService {
 
     ChatSessionDTO createNewSession(ChatSessionDTO sessionDTO);
 
-    List<ChatSessionDTO> getAllSessions();
+    List<ChatSessionDTO> getAllSessionsByUserId(String userId);
 
     List<ChatMessageDTO> getMessagesBySessionId(String sessionId);
 }

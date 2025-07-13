@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface ChatMessageRepository extends JpaRepository<ChatBoxMessage, String> {
     List<ChatBoxMessage> findChatBoxMessageByChatBoxSession_Id(String id);
+    Long countAllByChatBoxSession_Id(String id);
 }

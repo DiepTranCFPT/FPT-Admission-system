@@ -1,7 +1,7 @@
 package com.sba.chatboxes.service;
 
-import com.sba.accounts.pojos.Accounts;
-import com.sba.authentications.pojos.AccountDetails;
+import com.sba.accounts.services.AccountService;
+import com.sba.authentications.repositories.AuthenticationRepository;
 import com.sba.chatboxes.dto.ChatMessageDTO;
 import com.sba.chatboxes.dto.ChatSessionDTO;
 import com.sba.chatboxes.pojos.ChatBoxMessage;
@@ -10,15 +10,13 @@ import com.sba.chatboxes.repository.ChatMessageRepository;
 import com.sba.chatboxes.repository.ChatSessionRepository;
 import com.sba.configs.RabbitMQConfig;
 import com.sba.enums.Roles;
-import com.sba.exceptions.BadRequestException;
+import com.sba.exceptions.AuthException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -31,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 @RequiredArgsConstructor
 public class ChatBoxServiceImpl implements ChatBoxService {
+    private final AuthenticationRepository authenticationRepository;
     private final ChatSessionRepository chatSessionRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final RabbitTemplate rabbitTemplate;
@@ -73,7 +72,22 @@ public class ChatBoxServiceImpl implements ChatBoxService {
             ChatBoxSession session = chatSessionRepository.findById(sessionId)
                     .orElseThrow(() -> new RuntimeException("Chat session not found"));
 
-//            System.out.println("user message: " + messageDTO.getContent());
+            if (chatMessageRepository.countAllByChatBoxSession_Id(sessionId) == 0) {
+                // If this is the first message, request title generation
+                String titleRequestId = UUID.randomUUID().toString();
+                Map<String, Object> titleRequest = Map.of(
+                        "sessionId", sessionId,
+                        "content", messageDTO.getContent(),
+                        "requestId", titleRequestId
+                );
+
+                logger.info("Requesting title generation for new session: {}", sessionId);
+                rabbitTemplate.convertAndSend(
+                        RabbitMQConfig.PYTHON_EXCHANGE,
+                        "generate-title",
+                        titleRequest
+                );
+            }
 
             ChatBoxMessage savedMessage = createChatMessage(session, Roles.USER, messageDTO.getContent());
 
@@ -212,7 +226,6 @@ public class ChatBoxServiceImpl implements ChatBoxService {
     @Override
     public ChatSessionDTO createNewSession(ChatSessionDTO sessionDTO) {
         ChatBoxSession session = createChatSession(sessionDTO);
-
         ChatSessionDTO savedSession = ChatSessionDTO.builder()
                 .id(session.getId())
                 .title(session.getTitle())
@@ -224,8 +237,8 @@ public class ChatBoxServiceImpl implements ChatBoxService {
     }
 
     @Override
-    public List<ChatSessionDTO> getAllSessions() {
-        return chatSessionRepository.findAll().stream().map(this::convertSessionToDTO).toList();
+    public List<ChatSessionDTO> getAllSessionsByUserId(String userId) {
+        return chatSessionRepository.findByUser_IdOrderByCreatedAtDesc(userId).stream().map(this::convertSessionToDTO).toList();
     }
 
     @Override
@@ -266,19 +279,9 @@ public class ChatBoxServiceImpl implements ChatBoxService {
     }
 
     private ChatBoxSession createChatSession(ChatSessionDTO sessionDTO) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
-
         ChatBoxSession session = new ChatBoxSession();
 
-        if (principal instanceof AccountDetails accountDetails) {
-            Accounts account = accountDetails.getAccounts();
-            session.setUser(account);
-        } else {
-            throw new BadRequestException("User authentication information is missing or invalid");
-        }
-
-        // Set a default title initially
+        session.setUser(authenticationRepository.findById(sessionDTO.getUserId()).orElseThrow(() -> new AuthException("User not found")));
         session.setTitle(sessionDTO.getTitle() != null ? sessionDTO.getTitle() : "New Chat");
         ChatBoxSession savedSession = chatSessionRepository.save(session);
 
@@ -292,7 +295,7 @@ public class ChatBoxServiceImpl implements ChatBoxService {
                     "requestId", requestId
             );
 
-            logger.info("Requesting title generation for new session: {}", requestId);
+            logger.info("Requesting title generation for new session: {}", savedSession.getId());
 
             rabbitTemplate.convertAndSend(
                     RabbitMQConfig.PYTHON_EXCHANGE,
@@ -326,6 +329,7 @@ public class ChatBoxServiceImpl implements ChatBoxService {
                         convertSessionToDTO(updatedSession)
                 );
             });
+            logger.info("Sent generated title '{}' for session: {}", generatedTitle, sessionId);
         } catch (Exception e) {
             logger.error("Error updating session title", e);
         }
