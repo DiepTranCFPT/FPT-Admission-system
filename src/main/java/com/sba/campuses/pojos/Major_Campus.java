@@ -12,7 +12,7 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "Campus_Major")
+@Table(name = "campus_major")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,10 +22,10 @@ public class Major_Campus extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @OneToMany
-    private List<Campus> campus;
+    @ManyToOne
+    private Campus campus;
 
-    @OneToMany
-    private List<Major> major;
+    @ManyToOne
+    private Major major;
 
 }
