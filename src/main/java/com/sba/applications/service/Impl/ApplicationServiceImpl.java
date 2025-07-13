@@ -7,6 +7,7 @@ import com.sba.applications.repository.ApplicationRepository;
 import com.sba.campuses.pojos.Major;
 import com.sba.campuses.repository.CampusRepository;
 import com.sba.campuses.repository.MajorRepository;
+import com.sba.campuses.repository.Major_CampusRepository;
 import com.sba.enums.ApplicationStatus;
 import com.sba.utils.AccountUtils;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class ApplicationServiceImpl implements com.sba.applications.service.Appl
     private final ApplicationRepository applicationRepository;
     private final CampusRepository campusRepository;
     private final MajorRepository majorRepository;
+    private final Major_CampusRepository majorCampusRepository;
     private final AccountUtils accountUtils;
 
     @Override
@@ -60,16 +62,14 @@ public class ApplicationServiceImpl implements com.sba.applications.service.Appl
                 .orElseThrow(() -> new IllegalArgumentException("Major not found: " + dto.getMajor()));
         var campus = campusRepository.findByName(dto.getCampus())
                 .orElseThrow(() -> new IllegalArgumentException("Campus not found: " + dto.getCampus()));
+        boolean exists = majorCampusRepository.findByMajorAndCampus(major, campus).isPresent();
+        if (!exists) {
+            throw new IllegalArgumentException("The selected major is not offered at the selected campus");
+        }
 
         Application application = new Application();
         application.setAccounts(user);
         application.setCampus(campus);
-        List<Major> majors = majorRepository.findByCampus(campusRepository.findByName(dto.getCampus()).orElseThrow(() -> new IllegalArgumentException("Campus not found")));
-        for (Major majorMajor : majors) {
-            if (!majorMajor.getName().equals(dto.getMajor())) {
-                throw new IllegalArgumentException("The selected campus does not match the major's campus");
-            }
-        }
         application.setMajor(major);
         application.setScholarship("null");
         application.setApplicationStatus(ApplicationStatus.PENDING);
