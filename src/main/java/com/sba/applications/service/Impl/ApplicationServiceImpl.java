@@ -123,5 +123,6 @@ public class ApplicationServiceImpl implements com.sba.applications.service.Appl
         Application application = applicationRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Application not found"));
         application.setDeleted(true);
+        applicationRepository.save(application);
     }
 }
