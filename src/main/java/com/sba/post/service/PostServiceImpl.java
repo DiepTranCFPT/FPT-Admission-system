@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Files;
@@ -157,9 +158,15 @@ public class PostServiceImpl implements PostService {
                 request.getCreatedTo() == null && request.getPublishedFrom() == null &&
                 request.getPublishedTo() == null;
 
+        Pageable sortedPageable = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createdAt")
+        );
+
         Page<Posts> postsPage = isAllNull
-                ? repository.findAll(pageable)
-                : repository.findAll(PostSpecification.filter(request), pageable);
+                ? repository.findAll(sortedPageable)
+                : repository.findAll(PostSpecification.filter(request), sortedPageable);
 
         return postsPage.map(post -> {
             PostsResponse dto = new PostsResponse();
@@ -172,6 +179,7 @@ public class PostServiceImpl implements PostService {
             return dto;
         });
     }
+
 
     private List<String> extractImagePaths (String htmlContent){
         List<String> imagePaths = new ArrayList<>();
