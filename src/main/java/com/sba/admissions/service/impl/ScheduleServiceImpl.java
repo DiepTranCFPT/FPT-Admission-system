@@ -101,7 +101,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     //Staff phan hoi ve lich hen tu van
     @Override
     @Transactional
-    public ScheduleResponseDTO responsetStaff(String googleMeetLink, String scheduleId ) {
+    public ScheduleResponseDTO responseStaff(String googleMeetLink, String scheduleId ) {
         Accounts user = accountUtils.getCurrentUser();
 
         AdmissionSchedules schedule = scheduleRepository.findById(scheduleId)
@@ -120,7 +120,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         extra.put("schedule", updatedSchedule);
 
         EmailDetail emailDetail = new EmailDetail();
-        emailDetail.setRecipient(updatedSchedule.getUser().getEmail()); // email sinh viên
+        emailDetail.setRecipient(schedule.getUser().getEmail()); // email sinh viên
         emailDetail.setSubject("Lịch hẹn tư vấn tuyển sinh FPTU");
         emailDetail.setName(user.getUsername()); // tên nhân viên phụ trách
         emailDetail.setLink(googleMeetLink);
