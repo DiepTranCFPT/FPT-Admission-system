@@ -70,12 +70,7 @@ public class ScheduleController {
     public ResponseEntity<ScheduleResponseDTO> createMeetingLink(
             @PathVariable String id,
             @RequestParam("code") String code) throws Exception {
-        String summary = "Tư vấn tuyển sinh";
-        String description = "Cuộc hẹn tư vấn tuyển sinh giữa staff và user";
-        Date startDate = java.sql.Timestamp.valueOf(LocalDate.now().atStartOfDay());
-        Date endDate = new Date(startDate.getTime() + 30 * 60 * 1000);
-        String googleMeetLink = googleCalendarEventService.createGoogleMeetEventWithCode(
-            summary, description, startDate, endDate, code);
+        String googleMeetLink = googleCalendarEventService.createGoogleMeetEventWithCode(code);
         return ResponseEntity.ok(scheduleService.responseStaff(googleMeetLink, id));
     }
 
