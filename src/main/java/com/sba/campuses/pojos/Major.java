@@ -26,14 +26,12 @@ public class Major extends BaseEntity {
 
     private Double duration;
 
-    private  Double fee;
+    private Double fee;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "childmajors")
-    private Major majors;
+    @JoinColumn (name = "parent_majors")
+    private Major parentMajors;
 
-    @OneToMany(fetch = FetchType.LAZY ,mappedBy = "major")
-    private List<Major_Campus> campus;
-
-
+    @OneToMany(mappedBy = "major", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Major_Campus> major_campuses;
 }
