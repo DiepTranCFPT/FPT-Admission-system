@@ -45,6 +45,8 @@ public class SecurityConfig {
             "/api/test/public-api",
             "/api/authen/profile",
             "/api/authen/firebase-login",
+            "/api/campuses/**",
+            "/api/majors/**",
             "/login/oauth2/code/google",
             "/api/posts/latest",
             "/api/posts/{id}",
