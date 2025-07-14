@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -54,18 +55,17 @@ public class PostServiceImpl implements PostService {
                 Status.PUBLISHED, category, startOfDay, endOfDay, pageable
         );
 
-        List<PostsResponse> responses = new ArrayList<>();
-        for (Posts post : posts) {
-            PostsResponse response = new PostsResponse();
-            response.setId(post.getId());
-            response.setTitle(post.getTitle());
-            response.setCategory(post.getCategory().getLabel());
-            response.setPublishedAt(post.getPublishedAt().toString());
-            response.setImageUrl(extractFirstImage(post.getContent()));
-            responses.add(response);
-        }
-
-        return responses;
+        return posts.stream()
+                .map(post -> {
+                    PostsResponse response = new PostsResponse();
+                    response.setId(post.getId());
+                    response.setTitle(post.getTitle());
+                    response.setCategory(post.getCategory().getLabel());
+                    response.setPublishedAt(String.valueOf(post.getPublishedAt()));
+                    response.setImageUrl(extractFirstImage(post.getContent()));
+                    return response;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -188,10 +188,8 @@ public class PostServiceImpl implements PostService {
             PostsResponse dto = new PostsResponse();
             dto.setId(post.getId());
             dto.setTitle(post.getTitle());
-            dto.setCategory(post.getCategory().name());
+            dto.setImageUrl(extractFirstImage(post.getContent()));
             dto.setPublishedAt(String.valueOf(post.getPublishedAt()));
-            dto.setStatus(post.getStatus().name());
-            dto.setCreatedAt(String.valueOf(post.getCreatedAt()));
             return dto;
         });
     }
