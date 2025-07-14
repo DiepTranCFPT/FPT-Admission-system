@@ -18,24 +18,21 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class ApplicationServiceImpl implements com.sba.applications.service.ApplicationService {
-
     private final ApplicationRepository applicationRepository;
     private final CampusRepository campusRepository;
     private final MajorRepository majorRepository;
     private final Major_CampusRepository majorCampusRepository;
     private final AccountUtils accountUtils;
 
-    @Override
-    @Transactional
-    public Application createApplication(ApplicationDTO applicationDTO) {
-        validateApplicationDTO(applicationDTO);
-        Accounts currentUser = getAuthenticatedUser();
-        ensureNoExistingApplication(currentUser);
-        Application newApplication = buildApplication(applicationDTO, currentUser);
-        return applicationRepository.save(newApplication);
+    private ApplicationServiceImpl (ApplicationRepository applicationRepository, CampusRepository campusRepository, MajorRepository majorRepository, Major_CampusRepository majorCampusRepository, AccountUtils accountUtils){
+        this.applicationRepository = applicationRepository;
+        this.campusRepository = campusRepository;
+        this.majorRepository = majorRepository;
+        this.majorCampusRepository = majorCampusRepository;
+        this.accountUtils = accountUtils;
     }
+
     private void validateApplicationDTO(ApplicationDTO dto) {
         if (dto == null) {
             throw new IllegalArgumentException("Application data must not be null");
@@ -75,15 +72,32 @@ public class ApplicationServiceImpl implements com.sba.applications.service.Appl
         application.setApplicationStatus(ApplicationStatus.PENDING);
         return application;
     }
+    @Override
+    @Transactional
+    public Application createApplication(ApplicationDTO applicationDTO) {
+        validateApplicationDTO(applicationDTO);
+        Accounts currentUser = getAuthenticatedUser();
+        ensureNoExistingApplication(currentUser);
+        Application newApplication = buildApplication(applicationDTO, currentUser);
+        return applicationRepository.save(newApplication);
+    }
+
 
     @Override
     public List<Application> getAllApplications() {
-        return applicationRepository.findAll().stream().filter(Application::isDeleted).toList();
+        return applicationRepository.findAll()
+                .stream()
+                .filter(Application::isDeleted)
+                .toList();
     }
 
     @Override
     public Application getApplicationById(String id) {
-        return applicationRepository.findById(id).orElse(null);
+       Application application = applicationRepository.findById(id).orElseThrow(()-> new RuntimeException("Application not found with id: " + id));
+       if (application.isDeleted()) {
+           throw new RuntimeException("Application has been deleted");
+       }
+        return application;
     }
 
     @Override

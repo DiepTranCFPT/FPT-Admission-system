@@ -12,7 +12,6 @@ public interface TicketService {
     List<AdmissionTickets> getAllTickets();
     AdmissionTickets updateTicket(String id, TicketRequestDTO ticket);
     void deleteTicket(String id);
-
     AdmissionTickets responseToTicket(String id, String response);
 
 

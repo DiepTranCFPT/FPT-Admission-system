@@ -24,6 +24,7 @@ import java.util.Map;
 
 
 @Service
+@Transactional
 public class ScheduleServiceImpl implements ScheduleService {
     @Autowired
     private ScheduleRepository scheduleRepository;
@@ -97,11 +98,11 @@ public class ScheduleServiceImpl implements ScheduleService {
     public void deleteSchedule(String id) {
         scheduleRepository.deleteById(id);
     }
-//Staff phan hoi ve lich hen tu van
-//    @PreAuthorize("hasAuthority('ROLE_STAFF')")
+    //Staff phan hoi ve lich hen tu van
+    @PreAuthorize("hasAuthority('ROLE_STAFF')")
     @Override
     @Transactional
-    public ScheduleResponseDTO respontStaff(String googleMeetLink, String scheduleId ) {
+    public ScheduleResponseDTO responsetStaff(String googleMeetLink, String scheduleId ) {
         Accounts user = accountUtils.getCurrentUser();
 
         AdmissionSchedules schedule = scheduleRepository.findById(scheduleId)
