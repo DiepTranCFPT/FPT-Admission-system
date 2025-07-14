@@ -3,6 +3,7 @@ package com.sba.applications.controller;
 import com.sba.applications.dto.ApplicationDTO;
 import com.sba.applications.pojos.Application;
 import com.sba.applications.service.ApplicationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,13 +11,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/applications")
+@RequiredArgsConstructor
 public class ApplicationController {
 
     private final ApplicationService applicationService;
-
-    public ApplicationController(ApplicationService applicationService) {
-        this.applicationService = applicationService;
-    }
 
     @PostMapping("/create")
     public ResponseEntity<Application> createApplication(@RequestBody ApplicationDTO dto) {
