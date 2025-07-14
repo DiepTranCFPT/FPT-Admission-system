@@ -64,7 +64,10 @@ public class ApplicationServiceImpl implements com.sba.applications.service.Appl
         Application application = new Application();
         application.setAccounts(user);
         application.setCampus(campus);
-        List<Major> majors = majorRepository.findByCampus(campusRepository.findByName(dto.getCampus()).orElseThrow(() -> new IllegalArgumentException("Campus not found")));
+//        List<Major> majors = majorRepository.findByCampus(campusRepository.findByName(dto.getCampus()).orElseThrow(() -> new IllegalArgumentException("Campus not found")));
+        List<Major> majors = campusRepository.findMajorsByCampus(campusRepository.findByName(
+                dto.getCampus()).orElseThrow(() -> new IllegalArgumentException("Campus not found")));
+
         for (Major majorMajor : majors) {
             if (!majorMajor.getName().equals(dto.getMajor())) {
                 throw new IllegalArgumentException("The selected campus does not match the major's campus");

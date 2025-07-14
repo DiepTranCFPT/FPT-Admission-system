@@ -4,10 +4,12 @@ import com.sba.campuses.dto.CampusRequest;
 import com.sba.campuses.pojos.Campus;
 import com.sba.campuses.service.CampusService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/campuses")
@@ -17,17 +19,24 @@ public class CampusController {
     private CampusService campusService;
 
     @PostMapping
-    public ResponseEntity<Campus> save(@RequestBody CampusRequest campus) {
-        Campus savedCampus = campusService.save(campus);
-        return ResponseEntity.ok(savedCampus);
+    public ResponseEntity<?> save(@RequestBody CampusRequest request) {
+        try {
+            Campus savedCampus = campusService.save(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedCampus);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", e.getMessage()));
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Campus> update(@PathVariable String id, @RequestBody Campus campus) {
+    public ResponseEntity<?> update(@PathVariable String id, @RequestBody CampusRequest campusRequest) {
         try {
-            return ResponseEntity.ok(campusService.update(id, campus));
+            Campus updatedCampus = campusService.update(id, campusRequest);
+            return ResponseEntity.ok(updatedCampus);
         } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", e.getMessage()));
         }
     }
 
@@ -41,5 +50,22 @@ public class CampusController {
     public ResponseEntity<List<Campus>> findAll() {
         List<Campus> campuses = campusService.getAll();
         return ResponseEntity.ok(campuses);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> findById(@PathVariable String id) {
+        try {
+            Campus campus = campusService.getById(id);
+            return ResponseEntity.ok(campus);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Campus>> search(@RequestParam(required = false) String keyword) {
+        List<Campus> results = campusService.search(keyword);
+        return ResponseEntity.ok(results);
     }
 }

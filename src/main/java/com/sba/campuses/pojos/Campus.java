@@ -29,10 +29,7 @@ public class Campus extends BaseEntity {
 
     private String email;
 
-    @OneToMany(cascade = jakarta.persistence.CascadeType.ALL)
-    private List<Major> major;
-
-
-
-
+    @OneToMany(mappedBy = "campus", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Major_Campus> major_campuses;
 }
+
