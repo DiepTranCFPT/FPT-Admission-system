@@ -48,7 +48,8 @@ public class SecurityConfig {
             "/login/oauth2/code/google",
             "/api/posts/latest",
             "/api/posts/{id}",
-
+            "/api/posts/{category}/{title}",
+            "/ws/**",
     };
     private final String[] PUBLIC_ENDPOINTS_METHOD = {
             "/swagger-ui/**",
