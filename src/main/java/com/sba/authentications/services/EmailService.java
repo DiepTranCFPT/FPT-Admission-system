@@ -41,6 +41,11 @@ public class EmailService {
             context.setVariable("username", emailDetail.getName());
             context.setVariable("email",   emailDetail.getRecipient());
 
+            if (extra != null) {
+                for (Map.Entry<String, Object> entry : extra.entrySet()) {
+                    context.setVariable(entry.getKey(), entry.getValue());
+                }
+            }
             // --- Các biến riêng cho template phản hồi ticket ---
             if (extra != null && extra.get("ticket") instanceof AdmissionTickets ticket) {
                 context.setVariable("topic",     ticket.getTopic());

@@ -8,6 +8,7 @@ import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.*;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Service
@@ -35,7 +36,7 @@ public class GoogleCalendarEventService {
     /**
      * Tạo Google Meet event bằng mã code OAuth vừa xác thực
      */
-    public String createGoogleMeetEventWithCode(String summary, String description, Date startDate, Date endDate, String code) throws Exception {
+    public String createGoogleMeetEventWithCode( String code) throws Exception {
         // 1. Đổi code lấy access token
         Credential credential = googleOAuthService.exchangeCodeForCredential(code);
         Calendar calendarService = new Calendar.Builder(
@@ -46,10 +47,10 @@ public class GoogleCalendarEventService {
                 .build();
         // 2. Tạo event Google Calendar có Google Meet
         Event event = new Event()
-                .setSummary(summary)
-                .setDescription(description)
-                .setStart(new EventDateTime().setDateTime(new DateTime(startDate)).setTimeZone("Asia/Ho_Chi_Minh"))
-                .setEnd(new EventDateTime().setDateTime(new DateTime(endDate)).setTimeZone("Asia/Ho_Chi_Minh"))
+                .setSummary("summary")
+                .setDescription("Cuộc hẹn tư vấn tuyển sinh giữa staff và user")
+                .setStart(new EventDateTime().setDateTime(new DateTime(java.sql.Timestamp.valueOf(LocalDate.now().atStartOfDay()))).setTimeZone("Asia/Ho_Chi_Minh"))
+                .setEnd(new EventDateTime().setDateTime(new DateTime(new Date(java.sql.Timestamp.valueOf(LocalDate.now().atStartOfDay()).getTime() + 30 * 60 * 1000))).setTimeZone("Asia/Ho_Chi_Minh"))
                 .setConferenceData(new ConferenceData()
                         .setCreateRequest(new CreateConferenceRequest().setRequestId("random-" + System.currentTimeMillis()).setConferenceSolutionKey(new ConferenceSolutionKey().setType("hangoutsMeet"))));
         Event createdEvent = calendarService.events().insert("primary", event).setConferenceDataVersion(1).execute();

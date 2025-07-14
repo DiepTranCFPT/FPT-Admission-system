@@ -26,16 +26,17 @@ import java.util.stream.Collectors;
 public class TicketServiceImpl implements TicketService {
     @Autowired
     private TicketRepository ticketRepository;
+
     @Autowired
     private AuthenticationRepository accountsRepository;
 
     @Autowired
     private EmailService emailService;
 
-
     @Autowired
     private AccountUtils accountUtils;
-//user gui ticket yc ho tro
+
+    //user gui ticket yc ho tro
     private AdmissionTickets mapToEntity(TicketRequestDTO dto) {
         Accounts user = accountUtils.getCurrentUser();
         AdmissionTickets ticket = new AdmissionTickets();
@@ -57,6 +58,7 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public AdmissionTickets createTicket(TicketRequestDTO ticketRequestDTO) {
         try{
+
             AdmissionTickets ticket = mapToEntity(ticketRequestDTO);
             return ticketRepository.save(ticket);
              } catch (Exception e) {
