@@ -76,7 +76,7 @@ public class ScheduleController {
         Date endDate = new Date(startDate.getTime() + 30 * 60 * 1000);
         String googleMeetLink = googleCalendarEventService.createGoogleMeetEventWithCode(
             summary, description, startDate, endDate, code);
-        return ResponseEntity.ok(scheduleService.responsetStaff(googleMeetLink, id));
+        return ResponseEntity.ok(scheduleService.responseStaff(googleMeetLink, id));
     }
 
     @GetMapping("/oauth2/callback")
