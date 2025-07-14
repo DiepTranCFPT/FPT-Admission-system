@@ -135,5 +135,6 @@ public class PostController {
         Page<PostsResponse> result = postService.findBySearchTitle(title, pageable);
         return ResponseEntity.ok(result);
     }
+
 }
 

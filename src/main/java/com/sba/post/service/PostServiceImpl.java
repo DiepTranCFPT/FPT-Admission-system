@@ -158,6 +158,7 @@ public class PostServiceImpl implements PostService {
                 request.getCreatedTo() == null && request.getPublishedFrom() == null &&
                 request.getPublishedTo() == null;
 
+
         Pageable sortedPageable = PageRequest.of(
                 pageable.getPageNumber(),
                 pageable.getPageSize(),
@@ -193,7 +194,6 @@ public class PostServiceImpl implements PostService {
             return dto;
         });
     }
-
 
     private List<String> extractImagePaths (String htmlContent){
         List<String> imagePaths = new ArrayList<>();

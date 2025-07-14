@@ -32,11 +32,11 @@ public interface PostRepository extends JpaRepository<Posts, Long> , JpaSpecific
             Status status
     );
 
+
     Page<Posts> findByTitleContainingIgnoreCaseAndStatus(
             String content,
             Status status,
             Pageable pageable
     );
-
 
 }

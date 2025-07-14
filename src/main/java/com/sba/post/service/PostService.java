@@ -31,4 +31,5 @@ public interface PostService {
     Page<PostsResponse> getFilteredPosts(PostFilterRequest request, Pageable pageable);
 
     Page<PostsResponse> findBySearchTitle(String title, Pageable pageable);
+
 }
