@@ -180,6 +180,22 @@ public class PostServiceImpl implements PostService {
         });
     }
 
+    @Override
+    public Page<PostsResponse> findBySearchTitle(String title, Pageable pageable) {
+        Page<Posts> postsPage = repository.findByTitleContainingIgnoreCaseAndStatus(title, Status.PUBLISHED, pageable);
+
+        return postsPage.map(post -> {
+            PostsResponse dto = new PostsResponse();
+            dto.setId(post.getId());
+            dto.setTitle(post.getTitle());
+            dto.setCategory(post.getCategory().name());
+            dto.setPublishedAt(String.valueOf(post.getPublishedAt()));
+            dto.setStatus(post.getStatus().name());
+            dto.setCreatedAt(String.valueOf(post.getCreatedAt()));
+            return dto;
+        });
+    }
+
 
     private List<String> extractImagePaths (String htmlContent){
         List<String> imagePaths = new ArrayList<>();

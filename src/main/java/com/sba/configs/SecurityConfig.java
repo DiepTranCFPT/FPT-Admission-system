@@ -51,6 +51,7 @@ public class SecurityConfig {
             "/api/posts/latest",
             "/api/posts/{id}",
             "/api/posts/{category}/{title}",
+            "/api/posts/search",
             "/ws/**",
     };
     private final String[] PUBLIC_ENDPOINTS_METHOD = {
