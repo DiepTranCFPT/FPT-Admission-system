@@ -8,6 +8,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -23,7 +26,13 @@ public class ChatBoxMessage extends BaseEntity {
 
     private Roles role;
 
+    @Column(columnDefinition = "TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
     private String content;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    private String status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private ChatBoxSession chatBoxSession;
