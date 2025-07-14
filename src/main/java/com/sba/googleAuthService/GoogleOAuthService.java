@@ -13,11 +13,15 @@ import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInsta
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -25,8 +29,8 @@ import java.util.List;
 @Service
 public class GoogleOAuthService {
 
-    @Value("${credentialsfile}")
-    private String credentialsfile;
+    @Value("${credentialsFile}")
+    private String credentialsFile;
 
     private static final String APPLICATION_NAME = "Spring Boot Google Calendar Example";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
@@ -91,11 +95,22 @@ public class GoogleOAuthService {
     }
 
     private GoogleClientSecrets loadClientSecrets() throws Exception {
-        if (credentialsfile == null || credentialsfile.isBlank()) {
-            throw new IllegalStateException("Missing 'credentialsfile' environment variable.");
+        if (credentialsFile == null || credentialsFile.isBlank()) {
+            throw new IllegalStateException("Missing 'credentialsFile' property");
         }
 
-        ByteArrayInputStream stream = new ByteArrayInputStream(credentialsfile.getBytes(StandardCharsets.UTF_8));
-        return GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(stream));
+        // Nếu giá trị bắt đầu bằng "classpath:", dùng Spring Resource
+        if (credentialsFile.startsWith("classpath:")) {
+            String path = credentialsFile.replace("classpath:", "");
+            Resource resource = new ClassPathResource(path);
+            try (InputStreamReader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
+                return GoogleClientSecrets.load(JSON_FACTORY, reader);
+            }
+        }
+        // Nếu không, coi đây là đường dẫn tuyệt đối trên đĩa
+        try (InputStreamReader reader =
+                     new InputStreamReader(Files.newInputStream(Paths.get(credentialsFile)), StandardCharsets.UTF_8)) {
+            return GoogleClientSecrets.load(JSON_FACTORY, reader);
+        }
     }
 }

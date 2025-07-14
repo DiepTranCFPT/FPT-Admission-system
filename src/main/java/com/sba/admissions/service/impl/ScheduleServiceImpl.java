@@ -6,7 +6,9 @@ import com.sba.admissions.dto.ScheduleResponseDTO;
 import com.sba.admissions.pojos.AdmissionSchedules;
 import com.sba.admissions.repository.ScheduleRepository;
 import com.sba.admissions.service.ScheduleService;
+import com.sba.authentications.services.EmailService;
 import com.sba.enums.ProcessStatus;
+import com.sba.model.EmailDetail;
 import com.sba.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,7 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -25,6 +29,9 @@ public class ScheduleServiceImpl implements ScheduleService {
     private ScheduleRepository scheduleRepository;
     @Autowired
     private AccountUtils accountUtils;
+
+    @Autowired
+    private EmailService emailService;
 
     private AdmissionSchedules mapToEntity(ScheduleRequestDTO dto) {
         try{
@@ -96,12 +103,34 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Transactional
     public ScheduleResponseDTO respontStaff(String googleMeetLink, String scheduleId ) {
         Accounts user = accountUtils.getCurrentUser();
-        SecurityContextHolder.getContext().getAuthentication().getName();
-        AdmissionSchedules schedule = scheduleRepository.findById(scheduleId).orElseThrow(() -> new RuntimeException("Schedule not found"));
+
+        AdmissionSchedules schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new RuntimeException("Schedule not found"));
+
+        // Cập nhật schedule
         schedule.setMeetLink(googleMeetLink);
         schedule.setStatus(ProcessStatus.COMPLETED);
         schedule.setStaff(user);
         schedule.setCreateAt(LocalDateTime.now());
-        return mapToResponseDTO(scheduleRepository.save(schedule));
+
+        AdmissionSchedules updatedSchedule = scheduleRepository.save(schedule);
+
+        // === GỬI EMAIL ===
+        Map<String, Object> extra = new HashMap<>();
+        extra.put("schedule", updatedSchedule);
+
+        EmailDetail emailDetail = new EmailDetail();
+        emailDetail.setRecipient(updatedSchedule.getUser().getEmail()); // email sinh viên
+        emailDetail.setSubject("Lịch hẹn tư vấn tuyển sinh FPTU");
+        emailDetail.setName(user.getUsername()); // tên nhân viên phụ trách
+        emailDetail.setLink(googleMeetLink);
+        emailDetail.setExtra(extra);
+
+        emailDetail.setTemplate("schedule-meeting-template");
+
+        new Thread(() -> emailService.sendMailTemplate(emailDetail)).start();
+
+        return mapToResponseDTO(updatedSchedule);
     }
+
 }
