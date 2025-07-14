@@ -49,12 +49,10 @@ public class EmailService {
             }
 
             // Nếu dùng chung hàm cho nhiều template, bạn có thể kiểm tra tên template:
-            // if ("response-ticket-template".equals(emailDetail.getTemplate()))
-
             // 3. Sinh HTML
             String template = emailDetail.getTemplate() != null
                     ? emailDetail.getTemplate()
-                    : "response-ticket-templatee";
+                    : "response-ticket-template";
             String html = templateEngine.process(template, context);
             // 4. Gửi mail
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
