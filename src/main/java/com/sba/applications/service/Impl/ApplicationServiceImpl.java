@@ -7,9 +7,11 @@ import com.sba.applications.repository.ApplicationRepository;
 import com.sba.campuses.pojos.Major;
 import com.sba.campuses.repository.CampusRepository;
 import com.sba.campuses.repository.MajorRepository;
+import com.sba.campuses.repository.Major_CampusRepository;
 import com.sba.enums.ApplicationStatus;
 import com.sba.utils.AccountUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,19 +19,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ApplicationServiceImpl implements com.sba.applications.service.ApplicationService {
     private final ApplicationRepository applicationRepository;
     private final CampusRepository campusRepository;
     private final MajorRepository majorRepository;
     private final AccountUtils accountUtils;
 
-    private ApplicationServiceImpl (ApplicationRepository applicationRepository, CampusRepository campusRepository, MajorRepository majorRepository, Major_CampusRepository majorCampusRepository, AccountUtils accountUtils){
-        this.applicationRepository = applicationRepository;
-        this.campusRepository = campusRepository;
-        this.majorRepository = majorRepository;
-        this.majorCampusRepository = majorCampusRepository;
-        this.accountUtils = accountUtils;
-    }
 
     private void validateApplicationDTO(ApplicationDTO dto) {
         if (dto == null) {
