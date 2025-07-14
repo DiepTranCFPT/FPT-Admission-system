@@ -88,6 +88,7 @@ public class AuthenticationService implements IAuthentication {
                     .phone(accounts.getPhoneNumber() == null ? "" : accounts.getPhoneNumber())
                     .email(accounts.getEmail())
                     .id(accounts.getId())
+                    .role(accounts.getRole().toString())
                     .build();
             return ResponseObject.builder()
                     .data(accountResponse)
@@ -330,6 +331,7 @@ public class AuthenticationService implements IAuthentication {
     public CompletableFuture<ResponseObject> createStaff(String id) throws AccountNotFoundException {
         Accounts account = authenticationRepository.findById(id).orElseThrow(() -> new AccountNotFoundException("Account does not exist"));
         account.setRole(Roles.STAFF);
+        authenticationRepository.save(account);
         return CompletableFuture.supplyAsync(() -> ResponseObject.builder()
                 .data(account)
                 .message("create successful")
@@ -339,14 +341,12 @@ public class AuthenticationService implements IAuthentication {
     @Override
     public void forgotPassword(ForgotPasswordRequest forgotPasswordRequest) throws AccountNotFoundException {
         Accounts account = authenticationRepository.findByEmail(forgotPasswordRequest.getEmail()).orElseThrow(()-> new AccountNotFoundException("Account not found"));
-
-
         EmailDetail emailDetail = new EmailDetail();
         emailDetail.setRecipient(forgotPasswordRequest.getEmail());
         emailDetail.setSubject("Reset Password for account " + forgotPasswordRequest.getEmail() + "!!!");
         emailDetail.setMsgBody(""); // You might want to add a meaningful message here
         emailDetail.setButtonValue("Reset Password");
-        emailDetail.setLink("https://gymbe-production.up.railway.app/api/authen/reset-password?token=" + tokenService.generateToken(account));
+        emailDetail.setLink("https://fpt-admission-system.onrender.com/api/authen/reset-password?token=" + tokenService.generateToken(account));
         emailDetail.setName(account.getUsername());
 
         Runnable r = new Runnable() {
