@@ -99,7 +99,6 @@ public class ScheduleServiceImpl implements ScheduleService {
         scheduleRepository.deleteById(id);
     }
     //Staff phan hoi ve lich hen tu van
-    @PreAuthorize("hasAuthority('ROLE_STAFF')")
     @Override
     @Transactional
     public ScheduleResponseDTO responsetStaff(String googleMeetLink, String scheduleId ) {
