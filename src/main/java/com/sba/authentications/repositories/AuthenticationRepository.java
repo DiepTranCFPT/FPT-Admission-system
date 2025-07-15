@@ -22,6 +22,6 @@ public interface AuthenticationRepository extends JpaRepository<Accounts, String
 
     Optional<Accounts> findByFirebaseUid(String firebase);
 
-
+    Optional<Accounts> findByUsername(String username);
 
 }
