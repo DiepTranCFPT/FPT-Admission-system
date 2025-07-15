@@ -50,16 +50,13 @@ public class SecurityConfig {
             "/api/authen/profile",
             "/api/authen/firebase-login",
             "/login/oauth2/code/google",
-<<<<<<< Updated upstream
             "/api/posts/latest",
             "/api/posts/{id}",
             "/api/posts/{category}/{title}",
             "/api/posts/search",
             "/ws/**",
-=======
             "/api/accounts/**",  // Temporarily make accounts endpoints public for testing
 
->>>>>>> Stashed changes
     };
     private final String[] PUBLIC_ENDPOINTS_METHOD = {
             "/swagger-ui/**",
