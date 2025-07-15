@@ -8,6 +8,8 @@ public class ApplicationMapper {
         ApplicationDTO dto = new ApplicationDTO();
         dto.setCampus(entity.getCampus().getName());
         dto.setMajor(entity.getMajor().getName());
+        dto.setScholarship(entity.getScholarship());
+        dto.setApplicationStatus(entity.getApplicationStatus());
         return dto;
     }
 }
