@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Files;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -53,18 +55,17 @@ public class PostServiceImpl implements PostService {
                 Status.PUBLISHED, category, startOfDay, endOfDay, pageable
         );
 
-        List<PostsResponse> responses = new ArrayList<>();
-        for (Posts post : posts) {
-            PostsResponse response = new PostsResponse();
-            response.setId(post.getId());
-            response.setTitle(post.getTitle());
-            response.setCategory(post.getCategory().getLabel());
-            response.setPublishedAt(post.getPublishedAt().toString());
-            response.setImageUrl(extractFirstImage(post.getContent()));
-            responses.add(response);
-        }
-
-        return responses;
+        return posts.stream()
+                .map(post -> {
+                    PostsResponse response = new PostsResponse();
+                    response.setId(post.getId());
+                    response.setTitle(post.getTitle());
+                    response.setCategory(post.getCategory().getLabel());
+                    response.setPublishedAt(String.valueOf(post.getPublishedAt()));
+                    response.setImageUrl(extractFirstImage(post.getContent()));
+                    return response;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -157,9 +158,16 @@ public class PostServiceImpl implements PostService {
                 request.getCreatedTo() == null && request.getPublishedFrom() == null &&
                 request.getPublishedTo() == null;
 
+
+        Pageable sortedPageable = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createdAt")
+        );
+
         Page<Posts> postsPage = isAllNull
-                ? repository.findAll(pageable)
-                : repository.findAll(PostSpecification.filter(request), pageable);
+                ? repository.findAll(sortedPageable)
+                : repository.findAll(PostSpecification.filter(request), sortedPageable);
 
         return postsPage.map(post -> {
             PostsResponse dto = new PostsResponse();
@@ -169,6 +177,20 @@ public class PostServiceImpl implements PostService {
             dto.setPublishedAt(String.valueOf(post.getPublishedAt()));
             dto.setStatus(post.getStatus().name());
             dto.setCreatedAt(String.valueOf(post.getCreatedAt()));
+            return dto;
+        });
+    }
+
+    @Override
+    public Page<PostsResponse> findBySearchTitle(String title, Pageable pageable) {
+        Page<Posts> postsPage = repository.findByTitleContainingIgnoreCaseAndStatus(title, Status.PUBLISHED, pageable);
+
+        return postsPage.map(post -> {
+            PostsResponse dto = new PostsResponse();
+            dto.setId(post.getId());
+            dto.setTitle(post.getTitle());
+            dto.setImageUrl(extractFirstImage(post.getContent()));
+            dto.setPublishedAt(String.valueOf(post.getPublishedAt()));
             return dto;
         });
     }

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.sba.post.dto.request.PostFilterRequest;
 import org.springframework.data.domain.Page;
@@ -52,6 +53,7 @@ public class PostController {
 
     //danh cho trang admin xoa bai hehehe
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deletePost(@PathVariable Long id) {
         try {
             postService.deletePostById(id);
@@ -65,6 +67,7 @@ public class PostController {
 
     //danh cho trang admin tao bai post chua public
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<?> createPost(@RequestBody PostCreateAndUpdateRequest request, @RequestHeader("userId") String userId) {
         try {
             postService.createPost(request, userId);
@@ -76,6 +79,7 @@ public class PostController {
 
     //danh cho trang cap nhat bai post
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<?> updatePost(@PathVariable Long id, @RequestBody PostCreateAndUpdateRequest request) {
         try {
             postService.updatePost(id, request);
@@ -87,6 +91,7 @@ public class PostController {
 
     //danh cho trang admin public bai post
     @PatchMapping("/{id}/publish")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<?> publishPost(@PathVariable Long id)
     {
         try {
@@ -121,5 +126,15 @@ public class PostController {
             return ResponseEntity.badRequest().body(null);
         }
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<PostsResponse>> searchPostsByTitle(
+            @RequestParam String title,
+            Pageable pageable
+    ) {
+        Page<PostsResponse> result = postService.findBySearchTitle(title, pageable);
+        return ResponseEntity.ok(result);
+    }
+
 }
 
