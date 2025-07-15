@@ -20,15 +20,29 @@ public class DefaultUserInitializer implements CommandLineRunner {
     }
     @Override
     public void run(String... args) throws Exception {
+        // Check if admin user exists by email
         if (authenticationRepository.findByEmail("trancaodiepnct@gmail.com").isEmpty()) {
-            Accounts accounts = Accounts.builder()
-                    .password(passwordEncoder.encode("12345"))
-                    .role(Roles.ADMIN)
-                    .email("trancaodiepnct@gmail.com")
-                    .username("ADMIN")
-                    .enable(true)
-                    .deleted(false).build();
-            authenticationRepository.saveAndFlush(accounts);
+            try {
+                Accounts accounts = Accounts.builder()
+                        .password(passwordEncoder.encode("12345"))
+                        .role(Roles.ADMIN)
+                        .email("trancaodiepnct@gmail.com")
+                        .username("ADMIN")
+                        .enable(true)
+                        .deleted(false).build();
+                authenticationRepository.saveAndFlush(accounts);
+            } catch (Exception e) {
+                // If there's a constraint violation, the user already exists
+                System.out.println("Admin user already exists or constraint violation: " + e.getMessage());
+            }
         }
     }
+
+    
+
+
+
+//    //fix    public void setAuthenticationRepository(AuthenticationRepository authenticationRepository) {
+//        this.authenticationRepository = authenticationRepository;
+
 }
