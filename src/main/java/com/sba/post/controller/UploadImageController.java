@@ -33,7 +33,7 @@ public class UploadImageController {
         Path filePath = uploadPath.resolve(fileName);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-        String imageUrl = "http://localhost:8080/uploads/" + fileName;
+        String imageUrl = "https://fpt-admission-system.onrender.com/uploads/" + fileName;
         return ResponseEntity.ok(Map.of("url", imageUrl));
     }
 
