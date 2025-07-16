@@ -10,7 +10,7 @@ import java.util.List;
 public interface MajorService {
     List<Major> getAll();
 
-    Major save(MajorRequest majorRequest);
+    Major save(String id ,MajorRequest majorRequest);
 
     Major update(String id, MajorRequest majorRequest);
 
@@ -20,7 +20,7 @@ public interface MajorService {
 
     List<Major> getAllParentMajors();
 
-    Major saveChildMajor(ChildMajorRequest childMajorRequest);
+    Major saveChildMajor(String id ,ChildMajorRequest childMajorRequest);
 
     List<Major> getChildMajors(String majorId);
 

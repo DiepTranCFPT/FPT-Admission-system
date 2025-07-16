@@ -50,11 +50,9 @@ public class ApplicationController {
             return ResponseEntity.badRequest().body(null);
         }
     }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteApplication(@PathVariable String id) {
         applicationService.deleteApplication(id);
         return ResponseEntity.ok("Application deleted");
     }
-
 }
