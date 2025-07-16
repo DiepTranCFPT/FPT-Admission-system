@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -119,8 +120,8 @@ public class ApplicationServiceImpl implements com.sba.applications.service.Appl
     @Override
     @Transactional
     public void deleteApplication(String id) {
-        if (!applicationRepository.existsById(id)) {
-            throw new IllegalArgumentException("Application not found");
+        if (!applicationRepository.existsById(id) || Objects.requireNonNull(applicationRepository.findById(id).orElse(null)).isDeleted()) {
+            throw new IllegalArgumentException("Application not found or deleted");
         }
         Application application = applicationRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Application not found"));

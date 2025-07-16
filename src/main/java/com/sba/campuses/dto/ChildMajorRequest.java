@@ -16,6 +16,6 @@ public class ChildMajorRequest {
     private String description;
     private Double duration;
     private Double fee;
-    private String parentMajorId;
+
 
 }

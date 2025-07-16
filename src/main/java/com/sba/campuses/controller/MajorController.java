@@ -21,9 +21,9 @@ public class MajorController {
     private MajorService majorService;
 
     @PostMapping
-    public ResponseEntity<?> save(@RequestBody MajorRequest majorRequest) {
+    public ResponseEntity<?> save(@RequestParam String idCampus,@RequestBody MajorRequest majorRequest) {
         try {
-            Major saveMajor = majorService.save(majorRequest);
+            Major saveMajor = majorService.save(idCampus, majorRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(saveMajor);
         } catch (Exception e) {
             return ResponseEntity.badRequest()
@@ -65,9 +65,9 @@ public class MajorController {
     }
 
     @PostMapping("/child")
-    public ResponseEntity<?> saveChildMajor(@RequestBody ChildMajorRequest childMajorRequest) {
+    public ResponseEntity<?> saveChildMajor(@RequestParam String parentMajorId,@RequestBody ChildMajorRequest childMajorRequest) {
         try {
-            Major childMajor = majorService.saveChildMajor(childMajorRequest);
+            Major childMajor = majorService.saveChildMajor(parentMajorId,childMajorRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(childMajor);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -102,6 +102,5 @@ public class MajorController {
                     .body(Map.of("message", e.getMessage()));
         }
     }
-
 
 }
