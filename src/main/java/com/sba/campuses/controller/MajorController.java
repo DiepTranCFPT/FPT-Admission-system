@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -102,5 +103,14 @@ public class MajorController {
                     .body(Map.of("message", e.getMessage()));
         }
     }
-
+    @GetMapping("/campus/{id}")
+    public ResponseEntity<?> getMajorParentByCampus(@PathVariable String id) {
+        try {
+            List<Major> majors = majorService.getMajorByCampus(id);
+            return ResponseEntity.ok(majors);
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", e.getMessage()));
+        }
+    }
 }

@@ -163,6 +163,13 @@ public class MajorServiceImp implements MajorService {
     }
 
     @Override
+    public List<Major> getMajorByCampus(String idCampus) {
+        return majorRepository.findByCampus(idCampus).stream()
+                .filter(s-> !s.isDeleted() && s.getParentMajors() == null)
+                .toList();
+    }
+
+    @Override
     public List<Campus> getCampusesByMajor(Major major) {
         return major.getMajor_campuses().stream()
                 .map(Major_Campus::getCampus)
