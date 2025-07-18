@@ -4,6 +4,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +18,7 @@ public class UploadImageController {
     @Autowired
     private Cloudinary cloudinary;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @PostMapping(value = "/upload-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadImage(@RequestParam("upload") MultipartFile file) throws IOException {
         Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(),
@@ -31,6 +33,7 @@ public class UploadImageController {
         ));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @PostMapping("/delete-image")
     public ResponseEntity<?> deleteImage(@RequestBody Map<String, String> body) {
         String publicId = body.get("public_id");
