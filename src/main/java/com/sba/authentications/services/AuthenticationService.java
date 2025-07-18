@@ -215,6 +215,9 @@ public class AuthenticationService implements IAuthentication {
     @Transactional(rollbackFor = Exception.class)
     public String edit(UserRespone userRespone) throws AccountNotFoundException {
         Accounts accounts = authenticationRepository.findById(userRespone.getId()).orElseThrow(() -> new AccountNotFoundException("Account does not exist"));
+        if(accounts.isDeleted()){
+            throw new AccountNotFoundException("account deleted");
+        }
         accounts.setUsername(userRespone.getName());
         accounts.setEmail(userRespone.getEmail());
         accounts.setPhoneNumber(userRespone.getPhone());

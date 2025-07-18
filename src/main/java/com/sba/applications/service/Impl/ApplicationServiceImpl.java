@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -86,7 +87,7 @@ public class ApplicationServiceImpl implements com.sba.applications.service.Appl
     public List<Application> getAllApplications() {
         return applicationRepository.findAll()
                 .stream()
-                .filter(Application::isDeleted)
+                .filter(Application -> !Application.isDeleted())
                 .toList();
     }
 
@@ -104,6 +105,9 @@ public class ApplicationServiceImpl implements com.sba.applications.service.Appl
     public Application updateApplication(String id, ApplicationDTO applicationDTO) {
         Application existing = applicationRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Application not found"));
+        if(existing.isDeleted()){
+            throw new SecurityException("Application has been deleted");
+        }
         validateApplicationDTO(applicationDTO);
         var major = majorRepository.findByName(applicationDTO.getMajor())
                 .orElseThrow(() -> new IllegalArgumentException("Major not found: " + applicationDTO.getMajor()));
@@ -113,12 +117,11 @@ public class ApplicationServiceImpl implements com.sba.applications.service.Appl
         existing.setCampus(campus);
         return applicationRepository.save(existing);
     }
-
     @Override
     @Transactional
     public void deleteApplication(String id) {
-        if (!applicationRepository.existsById(id)) {
-            throw new IllegalArgumentException("Application not found");
+        if (!applicationRepository.existsById(id) || Objects.requireNonNull(applicationRepository.findById(id).orElse(null)).isDeleted()) {
+            throw new IllegalArgumentException("Application not found or deleted");
         }
         Application application = applicationRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Application not found"));

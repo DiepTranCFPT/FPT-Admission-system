@@ -14,6 +14,9 @@ public interface MajorRepository extends JpaRepository<Major, String> {
 
 //    List<Major> findByCampus(Campus campus);
 
+//    @Query("SELECT * from  ")
+//    List<Major> findAllMajors;
+
     List<Major> findByParentMajorsIsNull();
 
     List<Major> findByParentMajors(Major parentMajor);

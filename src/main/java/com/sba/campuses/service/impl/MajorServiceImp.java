@@ -1,11 +1,14 @@
-package com.sba.campuses.service;
+package com.sba.campuses.service.impl;
 
 import com.sba.campuses.dto.ChildMajorRequest;
 import com.sba.campuses.dto.MajorRequest;
 import com.sba.campuses.pojos.Campus;
 import com.sba.campuses.pojos.Major;
 import com.sba.campuses.pojos.Major_Campus;
+import com.sba.campuses.repository.CampusRepository;
 import com.sba.campuses.repository.MajorRepository;
+import com.sba.campuses.repository.Major_CampusRepository;
+import com.sba.campuses.service.MajorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,18 +23,36 @@ public class MajorServiceImp implements MajorService {
     @Autowired
     private MajorRepository majorRepository;
 
+    @Autowired
+    private CampusRepository campusRepository;
+
+    @Autowired
+    private Major_CampusRepository major_CampusRepository;
+
     @Override
     public List<Major> getAll() {
-        return majorRepository.findAll();
+        return majorRepository.findAll()
+                .stream()
+                .filter(s-> !s.isDeleted())
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Major save(MajorRequest majorRequest) {
+    public Major save(String id ,MajorRequest majorRequest) {
+        Campus campus = campusRepository.findById(id).orElseThrow(()->  new RuntimeException("Campus not found with id: " + id));
+        if(campus.isDeleted()) {
+            throw new RuntimeException("Campus has been deleted");
+        }
         Major major = new Major();
         major.setName(majorRequest.getName());
         major.setDescription(majorRequest.getDescription());
         major.setDuration(majorRequest.getDuration());
         major.setFee(majorRequest.getFee());
+
+        Major_Campus majorCampus = major_CampusRepository.findByCampus(campus);
+        majorCampus.setMajor(major);
+        major_CampusRepository.save(majorCampus);
+
         return majorRepository.save(major);
     }
 
@@ -69,7 +90,7 @@ public class MajorServiceImp implements MajorService {
 
     @Override
     public Major getbyId(String id) {
-        return majorRepository.findById(id).get();
+        return majorRepository.findById(id).orElseThrow(() -> new RuntimeException("Major not found with id: " + id));
     }
 
     @Override
@@ -85,11 +106,16 @@ public class MajorServiceImp implements MajorService {
     }
 
     @Override
-    public Major saveChildMajor(ChildMajorRequest request) {
+    public Major saveChildMajor(String id ,ChildMajorRequest request) {
         // Find parent major
-        Major parentMajor = majorRepository.findById(request.getParentMajorId())
+        Major parentMajor = majorRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Parent major not found"));
-
+        if(parentMajor.isDeleted()) {
+            throw new RuntimeException("Parent major has been deleted");
+        }
+        if(majorRepository.findByName(parentMajor.getName()).isPresent()) {
+            throw new RuntimeException("major already exists");
+        }
         // Create new child major
         Major childMajor = new Major();
         childMajor.setName(request.getName());
@@ -121,8 +147,8 @@ public class MajorServiceImp implements MajorService {
         }
 
         // If parent major is being changed
-        if (!childMajor.getParentMajors().getId().equals(request.getParentMajorId())) {
-            Major newParentMajor = majorRepository.findById(request.getParentMajorId())
+        if (!childMajor.getParentMajors().getId().equals(id)) {
+            Major newParentMajor = majorRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Parent major not found"));
             childMajor.setParentMajors(newParentMajor);
         }
@@ -142,10 +168,8 @@ public class MajorServiceImp implements MajorService {
                 .map(Major_Campus::getCampus)
                 .collect(Collectors.toList());
     }
-
     @Override
     public List<Campus> getCampusesByMajorId(String majorId) {
         return majorRepository.findCampusesByMajorId(majorId);
     }
-
 }
