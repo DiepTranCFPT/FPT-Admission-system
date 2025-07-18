@@ -12,4 +12,6 @@ public interface ApplicationService {
    Application getApplicationById(String id);
    Application updateApplication(String id, ApplicationDTO application);
    void deleteApplication(String id);
+   void acceptApplication(String id);
+   void declineApplication(String id , String response);
 }
