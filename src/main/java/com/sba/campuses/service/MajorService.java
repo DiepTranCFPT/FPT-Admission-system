@@ -27,6 +27,8 @@ public interface MajorService {
     List<Major> getAllChildMajors();
     Major updateChildMajor(String id, ChildMajorRequest request);
 
+    List<Major> getMajorByCampus(String idCampus);
+
     List<Campus> getCampusesByMajor(Major major);
 
     List<Campus> getCampusesByMajorId(String majorId);

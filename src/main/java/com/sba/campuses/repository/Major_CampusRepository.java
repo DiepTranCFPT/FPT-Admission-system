@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface Major_CampusRepository extends JpaRepository<Major_Campus, String> {
 
     Major_Campus findByCampus(Campus campus);
+
+
 }
