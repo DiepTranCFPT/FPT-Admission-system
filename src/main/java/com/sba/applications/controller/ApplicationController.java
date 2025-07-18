@@ -17,8 +17,11 @@ public class ApplicationController {
     private final ApplicationService applicationService;
 
     @PostMapping("/create")
-    public ResponseEntity<Application> createApplication(@RequestBody ApplicationDTO dto) {
+    public ResponseEntity<Application> createApplication(@RequestParam String idCampus , @RequestParam String idMajor) {
         try {
+            ApplicationDTO dto = new ApplicationDTO();
+            dto.setCampus(idCampus);
+            dto.setMajor(idMajor);
             Application created = applicationService.createApplication(dto);
             return ResponseEntity.ok(created);
         } catch (RuntimeException e) {
@@ -55,4 +58,17 @@ public class ApplicationController {
         applicationService.deleteApplication(id);
         return ResponseEntity.ok("Application deleted");
     }
+
+    @PutMapping("/acceptApplication{id}")
+    public ResponseEntity<String> updateApplication( @PathVariable String id) {
+        applicationService.acceptApplication(id);
+        return ResponseEntity.ok("Accept Application");
+    }
+
+    @PutMapping("/rejectApplication{id}")
+    public ResponseEntity<String> rejectApplication(@RequestBody String response, @PathVariable String id) {
+        applicationService.declineApplication(id, response);
+        return ResponseEntity.ok("Reject Application");
+    }
+
 }

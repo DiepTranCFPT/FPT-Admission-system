@@ -5,4 +5,5 @@ public enum ApplicationStatus {
     APPROVED,
     STUDYING,
     GRADUATED,
+    REJECTED,
 }

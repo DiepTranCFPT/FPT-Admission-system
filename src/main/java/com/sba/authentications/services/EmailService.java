@@ -79,6 +79,41 @@ public class EmailService {
         }
     }
 
+    public void sendMailTemplate(EmailDetail emailDetail, String templateName) {
+        try {
+            Map<String, Object> extra = emailDetail.getExtra();
+            Context context = new Context();
+            // For accept-application-template.html
+            context.setVariable("applicantName", emailDetail.getName());
+            context.setVariable("email", emailDetail.getRecipient());
+            if (extra != null) {
+                for (Map.Entry<String, Object> entry : extra.entrySet()) {
+                    context.setVariable(entry.getKey(), entry.getValue());
+                }
+            }
+
+            // 3. Sinh HTML
+            String htmlContent = templateEngine.process(templateName, context);
+            // 4. Gửi mail
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+            helper.setFrom("swpproject2024@gmail.com");
+            helper.setTo(emailDetail.getRecipient());
+            helper.setSubject(emailDetail.getSubject());
+            helper.setText(htmlContent, true);
+
+            // Đính kèm (nếu có)
+            if (emailDetail.getAttachment() != null) {
+                helper.addAttachment(emailDetail.getAttachment().getFilename(),
+                        emailDetail.getAttachment());
+            }
+
+            javaMailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 
