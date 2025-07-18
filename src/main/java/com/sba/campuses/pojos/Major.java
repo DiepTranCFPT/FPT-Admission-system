@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import net.minidev.json.annotate.JsonIgnore;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "majors")
 public class Major extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -25,13 +27,13 @@ public class Major extends BaseEntity {
 
     private Double duration;
 
-    private  Double fee;
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Column(name = "Childmajors")
-    private List<Major> majors;
+    private Double fee;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Campus campus;
+    @JoinColumn (name = "parent_majors")
+    @JsonIgnore
+    private Major parentMajors;
 
+    @OneToMany(mappedBy = "major", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Major_Campus> major_campuses;
 }

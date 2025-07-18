@@ -1,5 +1,6 @@
 package com.sba.campuses.pojos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sba.utils.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "Campus_Major")
+@Table(name = "campus_major")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,10 +23,12 @@ public class Major_Campus extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @OneToMany
-    private List<Campus> campus;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
+    private Campus campus;
 
-    @OneToMany
-    private List<Major> major;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
+    private Major major;
 
 }

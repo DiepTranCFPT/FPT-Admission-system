@@ -1,10 +1,7 @@
 package com.sba.campuses.pojos;
 
 import com.sba.utils.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,6 +14,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "campuses")
 public class Campus extends BaseEntity {
 
     @Id
@@ -31,10 +29,7 @@ public class Campus extends BaseEntity {
 
     private String email;
 
-    @OneToMany(cascade = jakarta.persistence.CascadeType.ALL, fetch = jakarta.persistence.FetchType.LAZY)
-    private List<Major> major;
-
-
-
-
+    @OneToMany(mappedBy = "campus", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Major_Campus> major_campuses;
 }
+
