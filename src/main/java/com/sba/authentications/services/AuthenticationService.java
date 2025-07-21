@@ -347,7 +347,7 @@ public class AuthenticationService implements IAuthentication {
         EmailDetail emailDetail = new EmailDetail();
         emailDetail.setRecipient(forgotPasswordRequest.getEmail());
         emailDetail.setSubject("Reset Password for account " + forgotPasswordRequest.getEmail() + "!!!");
-        emailDetail.setMsgBody(""); // You might want to add a meaningful message here
+        emailDetail.setMsgBody("");
         emailDetail.setButtonValue("Reset Password");
         emailDetail.setLink("https://fpt-admission-system.onrender.com/api/authen/reset-password?token=" + tokenService.generateToken(account));
         emailDetail.setName(account.getUsername());
@@ -358,7 +358,6 @@ public class AuthenticationService implements IAuthentication {
                 emailService.sendMailTemplateForgot(emailDetail);
             }
         };
-
         new Thread(r).start();
     }
 
