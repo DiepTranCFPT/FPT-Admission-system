@@ -9,17 +9,16 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
+
 public interface MajorRepository extends JpaRepository<Major, String> {
     Optional<Major> findByName(String majorName);
-
-//    List<Major> findByCampus(Campus campus);
-
-//    @Query("SELECT * from  ")
-//    List<Major> findAllMajors;
 
     List<Major> findByParentMajorsIsNull();
 
     List<Major> findByParentMajors(Major parentMajor);
+
+    @Query("SELECT m from Major m")
+    List<Major> getALlMajors();
 
 
     @Query("SELECT m.major From Major_Campus m WHERE m.campus.id = :campus")
