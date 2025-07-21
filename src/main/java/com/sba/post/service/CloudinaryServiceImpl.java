@@ -34,7 +34,6 @@ public class CloudinaryServiceImpl implements CloudinaryService {
 
         String resizedUrl = cloudinary.url()
                 .transformation(new Transformation()
-                        .width(1200)
                         .quality(70)
                         .crop("scale")
                 )
