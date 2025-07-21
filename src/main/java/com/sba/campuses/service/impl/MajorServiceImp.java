@@ -113,9 +113,9 @@ public class MajorServiceImp implements MajorService {
         if(parentMajor.isDeleted()) {
             throw new RuntimeException("Parent major has been deleted");
         }
-        if(majorRepository.findByName(parentMajor.getName()).isPresent()) {
-            throw new RuntimeException("major already exists");
-        }
+//        if(majorRepository.findByName(parentMajor.getName()).isPresent()) {
+//            throw new RuntimeException("major already exists");
+//        }
         // Create new child major
         Major childMajor = new Major();
         childMajor.setName(request.getName());
@@ -147,11 +147,11 @@ public class MajorServiceImp implements MajorService {
         }
 
         // If parent major is being changed
-        if (!childMajor.getParentMajors().getId().equals(id)) {
-            Major newParentMajor = majorRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Parent major not found"));
-            childMajor.setParentMajors(newParentMajor);
-        }
+//        if (!childMajor.getParentMajors().getId().equals(id)) {
+//            Major newParentMajor = majorRepository.findById(id)
+//                    .orElseThrow(() -> new RuntimeException("Parent major not found"));
+//            childMajor.setParentMajors(newParentMajor);
+//        }
 
         // Update other fields
         childMajor.setName(request.getName());

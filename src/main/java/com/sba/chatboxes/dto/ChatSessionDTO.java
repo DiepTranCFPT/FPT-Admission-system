@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Data
 @Builder
@@ -15,7 +15,7 @@ public class ChatSessionDTO {
     private String id;
     private String title;
     private String userId;
-    private LocalDateTime createdAt;
+    private ZonedDateTime createdAt;
     private String firstMessage;
     private String lastMessage;
 }
