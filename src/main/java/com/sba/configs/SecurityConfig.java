@@ -38,14 +38,21 @@ public class SecurityConfig {
             "/v3/api-docs/**",
             "/swagger-resources/**",
             "/api-docs/**",
-            "/admin/login",
-            "/admin/register",
+            "/api/authen/forgot-password",
+            "/api/authen/reset-password",
             "/api/authen/login/**",
             "/api/authen/register/**",
             "/api/test/public-api",
             "/api/authen/profile",
             "/api/authen/firebase-login",
             "/login/oauth2/code/google",
+            "/api/posts/latest",
+            "/api/posts/{id}",
+            "/api/posts/{category}/{title}",
+            "/api/posts/search",
+            "/api/tickets",
+            "/ws/**",
+            "/api/accounts/**",  // Temporarily make accounts endpoints public for testing
 
     };
     private final String[] PUBLIC_ENDPOINTS_METHOD = {

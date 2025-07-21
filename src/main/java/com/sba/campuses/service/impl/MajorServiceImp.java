@@ -31,7 +31,7 @@ public class MajorServiceImp implements MajorService {
 
     @Override
     public List<Major> getAll() {
-        return majorRepository.findAll()
+        return majorRepository.getALlMajors()
                 .stream()
                 .filter(s-> !s.isDeleted())
                 .collect(Collectors.toList());
@@ -160,6 +160,13 @@ public class MajorServiceImp implements MajorService {
         childMajor.setFee(request.getFee());
 
         return majorRepository.save(childMajor);
+    }
+
+    @Override
+    public List<Major> getMajorByCampus(String idCampus) {
+        return majorRepository.findByCampus(idCampus).stream()
+                .filter(s-> !s.isDeleted() && s.getParentMajors() == null)
+                .toList();
     }
 
     @Override

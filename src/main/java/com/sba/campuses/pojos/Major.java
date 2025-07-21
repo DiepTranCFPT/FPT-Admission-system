@@ -3,7 +3,7 @@ package com.sba.campuses.pojos;
 import com.sba.utils.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import net.minidev.json.annotate.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.List;
 

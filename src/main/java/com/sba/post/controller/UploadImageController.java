@@ -17,23 +17,18 @@ import java.util.Map;
 public class UploadImageController {
 
     @Autowired
-    private Cloudinary cloudinary;
-    @Autowired
     private CloudinaryService cloudinaryService;
 
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @PostMapping(value = "/upload-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> uploadImage(@RequestParam("upload") MultipartFile file) throws IOException {
-        Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(),
-                ObjectUtils.asMap("resource_type", "auto"));
-
-        String imageUrl = (String) uploadResult.get("secure_url");
-        String publicId = (String) uploadResult.get("public_id");
-
-        return ResponseEntity.ok(Map.of(
-                "url", imageUrl,
-                "public_id", publicId
-        ));
+    public ResponseEntity<?> uploadImage(@RequestParam("upload") MultipartFile file) {
+        try {
+            Map<String, String> result = cloudinaryService.resizeAndUpload(file);
+            return ResponseEntity.ok(result);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Không thể xử lý ảnh: " + e.getMessage()));
+        }
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
