@@ -25,7 +25,7 @@ public class ChatBoxSession {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Accounts user;
 
 }
