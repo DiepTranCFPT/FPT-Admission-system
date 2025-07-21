@@ -54,6 +54,7 @@ public class SecurityConfig {
             "/api/posts/{id}",
             "/api/posts/{category}/{title}",
             "/api/posts/search",
+            "/api/tickets",
             "/ws/**",
             "/api/accounts/**",  // Temporarily make accounts endpoints public for testing
 

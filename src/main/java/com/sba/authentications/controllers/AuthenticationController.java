@@ -110,11 +110,9 @@ public class AuthenticationController {
     @PostMapping("/reset-password")
     public ResponseEntity<String> resetPassword(
             @RequestParam("token") String token, @RequestBody ResetPasswordRequest resetPasswordRequest) throws AccountNotFoundException {
-
         if (authenticationService.resetPassword(resetPasswordRequest) == 1) {
             if (token.equals(resetPasswordRequest.getToken())) {
                 return ResponseEntity.ok("Success");
-
             } else {
                 return ResponseEntity.ok("fail");
             }
