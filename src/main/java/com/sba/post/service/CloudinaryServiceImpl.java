@@ -1,6 +1,7 @@
 package com.sba.post.service;
 
 import com.cloudinary.Cloudinary;
+import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
 import lombok.AllArgsConstructor;
 import net.coobird.thumbnailator.Thumbnails;
@@ -24,22 +25,25 @@ public class CloudinaryServiceImpl implements CloudinaryService {
 
     @Override
     public Map<String, String> resizeAndUpload(MultipartFile file) throws IOException {
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        Thumbnails.of(file.getInputStream())
-                .outputQuality(0.7f)
-                .toOutputStream(outputStream);
-
-        byte[] resizedImage = outputStream.toByteArray();
-
         Map<?, ?> uploadResult = cloudinary.uploader().upload(
-                resizedImage,
+                file.getBytes(), // Dùng file gốc luôn
                 ObjectUtils.asMap("resource_type", "image")
         );
 
+        String publicId = (String) uploadResult.get("public_id");
+
+        String resizedUrl = cloudinary.url()
+                .transformation(new Transformation()
+                        .width(1200)
+                        .quality(70)
+                        .crop("scale")
+                )
+                .generate(publicId);
+
         return Map.of(
-                "url", (String) uploadResult.get("secure_url"),
-                "public_id", (String) uploadResult.get("public_id")
+                "url", resizedUrl,
+                "public_id", publicId
         );
     }
+
 }
