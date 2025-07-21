@@ -1,6 +1,5 @@
 package com.sba.chatboxes.service;
 
-import com.sba.accounts.services.AccountService;
 import com.sba.authentications.repositories.AuthenticationRepository;
 import com.sba.chatboxes.dto.ChatMessageDTO;
 import com.sba.chatboxes.dto.ChatSessionDTO;
@@ -18,10 +17,10 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -199,7 +198,7 @@ public class ChatBoxServiceImpl implements ChatBoxService {
                             Roles.valueOf(messageMap.get("role").toString()) : null)
                     .requestId((String) messageMap.get("requestId"))
                     .status((String) messageMap.get("status"))
-                    .createdAt((String) messageMap.get("createdAt"))
+                    .createdAt((ZonedDateTime) messageMap.get("createdAt"))
                     .build();
             handleMessageResponse(messageDTO);
         } else if (payload instanceof ChatMessageDTO) {
@@ -403,7 +402,7 @@ public class ChatBoxServiceImpl implements ChatBoxService {
                 .sessionId(message.getChatBoxSession().getId())
                 .content(message.getContent())
                 .role(message.getRole())
-                .createdAt(message.getCreatedAt() != null ? message.getCreatedAt().toString() : null)
+                .createdAt(message.getCreatedAt() != null ? message.getCreatedAt() : null)
                 .build();
     }
 }
