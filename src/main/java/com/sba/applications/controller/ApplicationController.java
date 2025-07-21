@@ -73,11 +73,11 @@ public class ApplicationController {
     }
 
     @PostMapping("/submit-score")
-    public ResponseEntity<String> submitScore(@RequestParam double scoreT,@RequestParam double scoreV,@RequestParam double scoreA,@RequestParam String applicationId) {
+    public ResponseEntity<String> submitScore(@RequestParam double scoreT,@RequestParam double scoreV,@RequestParam double scoreA) {
         try {
             double score = (scoreT + scoreV + scoreA)/3;
             Scholarship scholarship = new Scholarship(score);
-            applicationService.saveScore(applicationId,score);
+            applicationService.saveScore(score);
             if (scholarship.isEligible()) {
                 return ResponseEntity.ok("Congratulations! You are eligible for a scholarship.");
             } else {

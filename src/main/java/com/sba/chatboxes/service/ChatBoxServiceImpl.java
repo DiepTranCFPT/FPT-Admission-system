@@ -238,7 +238,8 @@ public class ChatBoxServiceImpl implements ChatBoxService {
 
     @Override
     public List<ChatSessionDTO> getAllSessionsByUserId(String userId) {
-        return chatSessionRepository.findByUser_IdOrderByCreatedAtDesc(userId).stream().map(this::convertSessionToDTO).toList();
+        return chatSessionRepository.findByUser_IdOrderByCreatedAtDesc(userId)
+                .stream().map(this::convertSessionToDTO).toList();
     }
 
     @Override

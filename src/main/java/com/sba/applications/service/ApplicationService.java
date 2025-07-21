@@ -14,5 +14,5 @@ public interface ApplicationService {
    void deleteApplication(String id);
    void acceptApplication(String id);
    void declineApplication(String id , String response);
-   void saveScore(String applicationId, double score);
+   void saveScore( double score);
 }

@@ -51,7 +51,6 @@ public class ChatBoxController {
     public ResponseEntity<String> cancelProcessing(
             @PathVariable String sessionId,
             @PathVariable String requestId) {
-
         chatBoxService.handleMessageCancel(sessionId, requestId);
         return ResponseEntity.ok("Cancellation request sent");
     }
