@@ -1,5 +1,6 @@
 package com.sba.applications.controller;
 
+import com.sba.applications.dto.Scholarship;
 import com.sba.applications.dto.ApplicationDTO;
 import com.sba.applications.pojos.Application;
 import com.sba.applications.service.ApplicationService;
@@ -71,4 +72,19 @@ public class ApplicationController {
         return ResponseEntity.ok("Reject Application");
     }
 
+    @PostMapping("/submit-score")
+    public ResponseEntity<String> submitScore(@RequestParam double scoreT,@RequestParam double scoreV,@RequestParam double scoreA,@RequestParam String applicationId) {
+        try {
+            double score = (scoreT + scoreV + scoreA)/3;
+            Scholarship scholarship = new Scholarship(score);
+            applicationService.saveScore(applicationId,score);
+            if (scholarship.isEligible()) {
+                return ResponseEntity.ok("Congratulations! You are eligible for a scholarship.");
+            } else {
+                return ResponseEntity.ok("Thank you for submitting your score. Unfortunately, you are not eligible for a scholarship.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("An error occurred while processing your score.");
+        }
+    }
 }

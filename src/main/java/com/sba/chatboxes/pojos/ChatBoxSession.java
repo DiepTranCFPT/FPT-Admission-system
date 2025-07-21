@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Data
@@ -22,10 +22,11 @@ public class ChatBoxSession {
     @Column(columnDefinition = "TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
     private String title;
 
+    @Column(columnDefinition = "TIMESTAMP")
     @CreationTimestamp
-    private LocalDateTime createdAt;
+    private ZonedDateTime createdAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Accounts user;
 
 }

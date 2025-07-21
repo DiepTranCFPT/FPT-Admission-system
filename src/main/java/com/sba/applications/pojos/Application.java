@@ -40,4 +40,6 @@ public class Application extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private ApplicationStatus applicationStatus;
+
+    private Double score;
 }

@@ -1,11 +1,15 @@
 package com.sba.configs;
 
+import com.sba.chatboxes.dto.ChatMessageDTO;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Map;
+import java.util.UUID;
 
 @Configuration
 public class RabbitMQConfig {
@@ -18,6 +22,14 @@ public class RabbitMQConfig {
 
     // Exchange for Python communication
     public static final String PYTHON_EXCHANGE = "python-exchange";
+
+    @Bean(name = "replyQueue")
+    public Queue replyQueue() {
+        return QueueBuilder.nonDurable()
+                .autoDelete()
+                .exclusive()
+                .build();
+    }
 
     @Bean
     public Queue pythonTitleRequestQueue() {
@@ -91,9 +103,30 @@ public class RabbitMQConfig {
 
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory,
-                                         Jackson2JsonMessageConverter jsonMessageConverter) {
+                                         Jackson2JsonMessageConverter jsonMessageConverter,
+                                         Queue replyQueue) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(jsonMessageConverter);
+        rabbitTemplate.setDefaultReceiveQueue(replyQueue.getName());
+
+        // Add message post processor to ensure message properties are set
+        rabbitTemplate.setBeforePublishPostProcessors(message -> {
+            MessageProperties props = message.getMessageProperties();
+            props.setReplyTo(replyQueue.getName());
+            props.setType(determineMessageType(message, jsonMessageConverter));
+            return message;
+        });
+
         return rabbitTemplate;
+    }
+
+    private String determineMessageType(Message message, Jackson2JsonMessageConverter messageConverter) {
+        Object payload = messageConverter.fromMessage(message);
+        if (payload instanceof ChatMessageDTO) {
+            return "chat-response";
+        } else if (payload instanceof Map) {
+            return "title-response";
+        }
+        return "unknown";
     }
 }

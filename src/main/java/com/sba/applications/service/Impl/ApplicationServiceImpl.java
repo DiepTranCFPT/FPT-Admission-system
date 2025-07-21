@@ -183,4 +183,23 @@ public class ApplicationServiceImpl implements ApplicationService {
         applicationRepository.save(application);
     }
 
+    @Override
+    public void saveScore(String applicationId, double score) {
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new IllegalArgumentException("Application not found with ID: " + applicationId));
+        application.setScore(score);
+        if(score >=8 && score < 9){
+            application.setScholarship("30%");
+        }
+        else if(score >= 9 && score < 9.9){
+            application.setScholarship("60%");
+        }
+        else if(score == 10){
+            application.setScholarship("100%");
+        }
+        else {
+            application.setScholarship("No scholarship");
+        }
+        applicationRepository.save(application);
+    }
 }
