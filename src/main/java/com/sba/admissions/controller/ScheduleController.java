@@ -84,4 +84,13 @@ public class ScheduleController {
         }
         return ResponseEntity.ok("Google OAuth code: " + code);
     }
+    @GetMapping("/user")
+    public ResponseEntity<List<AdmissionSchedules>> getByUser() {
+        List<AdmissionSchedules> schedules = scheduleService.getSchedulesByUserId();
+        if (schedules.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(schedules);
+
+    }
 }
