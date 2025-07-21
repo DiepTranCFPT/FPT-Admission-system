@@ -31,7 +31,7 @@ public class MajorServiceImp implements MajorService {
 
     @Override
     public List<Major> getAll() {
-        return majorRepository.findAll()
+        return majorRepository.getALlMajors()
                 .stream()
                 .filter(s-> !s.isDeleted())
                 .collect(Collectors.toList());
