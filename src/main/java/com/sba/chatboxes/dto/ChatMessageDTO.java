@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.ZonedDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -15,7 +17,7 @@ public class ChatMessageDTO {
     private Roles role;
     private String content;
     private String sessionId;
-    private String createdAt;
+    private ZonedDateTime createdAt;
     private String requestId;
     private String status;
 }

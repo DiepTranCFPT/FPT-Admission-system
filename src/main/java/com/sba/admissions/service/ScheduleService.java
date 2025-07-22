@@ -16,4 +16,6 @@ public interface ScheduleService {
     void deleteSchedule(String id);
     @PreAuthorize("hasRole('STAFF') or hasRole('ADMIN')")
     ScheduleResponseDTO responseStaff(String googleMeetLink, String scheduleId);
+
+    List<AdmissionSchedules> getSchedulesByUserId();
 }

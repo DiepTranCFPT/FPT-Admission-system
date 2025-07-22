@@ -39,9 +39,6 @@ public class ScheduleServiceImpl implements ScheduleService {
 
 
 
-
-
-
 //dang ky tu van bang gg meet
     @Override
     public ScheduleResponseDTO createSchedule(LocalDateTime admissionAt) {
@@ -124,6 +121,13 @@ public class ScheduleServiceImpl implements ScheduleService {
         new Thread(() -> emailService.sendMailTemplate(emailDetail)).start();
 
         return scheduleDTO.mapToResponseDTO(updatedSchedule);
+    }
+
+    @Override
+    public List<AdmissionSchedules> getSchedulesByUserId() {
+        Accounts user = accountUtils.getCurrentUser();
+        List<AdmissionSchedules> list = scheduleRepository.findByUser(user);
+        return list;
     }
 
 }
